@@ -44,7 +44,8 @@ button.ghost { background: transparent; color: var(--ink); border: 1px solid var
 .cell .value { fill: var(--ink); font-size: 22px; font-weight: 600; }
 .cell .idx { fill: var(--muted); font-size: 12px; }
 .pointer text { fill: var(--accent); font-size: 15px; font-weight: 600; }
-.readout { fill: var(--muted); font-size: 15px; }
+/* Oversized so the readout stays legible when a wide array shrinks the whole SVG. */
+.readout { fill: var(--muted); font-size: 26px; }
 #caption { margin: .4rem 0 0; font-size: 1rem; min-height: 1.55em; }
 
 .controls { display: flex; align-items: center; gap: .5rem; margin-top: 1rem; }
