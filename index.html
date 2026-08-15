@@ -7,57 +7,83 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header>
-  <h1>CodeTeach</h1>
-  <select id="picker" aria-label="Choose a problem"></select>
-</header>
 
-<main>
-  <section class="pane" id="problem-pane">
-    <h2 id="title"></h2>
-    <div id="statement"></div>
-    <h3>Examples</h3>
-    <div id="examples"></div>
-    <h3>Hints</h3>
-    <div id="hints"></div>
-    <button id="hint-btn">Reveal a hint</button>
-    <p id="hint-count" class="muted"></p>
-  </section>
+<div class="shell">
 
-  <section class="pane" id="viz-pane">
-    <div id="mine-bar" hidden>
-      <span>Showing <strong>your run</strong> — checkpoints are off here.</span>
-      <button id="mine-back" class="ghost">Back to the walkthrough</button>
+  <nav class="sidebar">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true">CT</span>
+      <h1>CodeTeach</h1>
     </div>
-    <svg id="viz" viewBox="0 0 800 220" role="img" aria-label="Algorithm animation"></svg>
-    <p id="caption" role="status"></p>
-    <div id="checkpoint" hidden>
-      <p id="cp-question"></p>
-      <div id="cp-options"></div>
-      <p id="cp-feedback" role="status"></p>
-    </div>
-    <div class="controls">
-      <button id="first" aria-label="First step">⏮</button>
-      <button id="prev" aria-label="Previous step">◀</button>
-      <button id="next" aria-label="Next step">▶</button>
-      <button id="last" aria-label="Last step">⏭</button>
-      <input id="scrub" type="range" min="0" value="0" aria-label="Step">
-      <span id="step-count" class="muted"></span>
-    </div>
-  </section>
 
-  <section class="pane" id="code-pane">
-    <label for="editor">Your solution</label>
-    <div class="editor-wrap">
-      <pre id="gutter" aria-hidden="true"></pre>
-      <textarea id="editor" spellcheck="false" autocapitalize="off"
-                autocorrect="off" autocomplete="off" wrap="off"></textarea>
-    </div>
-    <button id="run">Run tests</button>
-    <button id="viz-mine" class="ghost">Visualize my run</button>
-    <div id="results"></div>
-  </section>
-</main>
+    <p class="sidebar-label">Two Pointers</p>
+    <ul id="problem-list"></ul>
+
+    <!-- app.js drives selection through this; the sidebar mirrors it. -->
+    <label class="sr-only" for="picker">Choose a problem</label>
+    <select id="picker" class="sr-only"></select>
+
+    <p class="sidebar-foot">Watch it work, predict the next move, then write it yourself.</p>
+  </nav>
+
+  <main class="work">
+
+    <section class="column">
+      <div class="card" id="viz-pane">
+        <div id="mine-bar" hidden>
+          <span>Showing <strong>your run</strong> — checkpoints are off here.</span>
+          <button id="mine-back" class="ghost">Back to the walkthrough</button>
+        </div>
+
+        <svg id="viz" viewBox="0 0 800 220" role="img" aria-label="Algorithm animation"></svg>
+        <p id="caption"></p>
+
+        <div id="checkpoint" hidden>
+          <p id="cp-question"></p>
+          <div id="cp-options"></div>
+          <p id="cp-feedback" role="status"></p>
+        </div>
+
+        <div class="controls">
+          <button id="first" class="icon-btn" aria-label="First step">⏮</button>
+          <button id="prev" class="icon-btn" aria-label="Previous step">◀</button>
+          <button id="next" class="icon-btn" aria-label="Next step">▶</button>
+          <button id="last" class="icon-btn" aria-label="Last step">⏭</button>
+          <input id="scrub" type="range" min="0" value="0" aria-label="Step">
+          <span id="step-count"></span>
+        </div>
+      </div>
+
+      <div class="card" id="problem-pane">
+        <div class="card-head"><h2 id="title"></h2></div>
+        <div id="statement"></div>
+
+        <h3>Examples</h3>
+        <div id="examples"></div>
+
+        <h3>Hints</h3>
+        <div id="hints"></div>
+        <button id="hint-btn" class="ghost">Reveal a hint</button>
+        <p id="hint-count"></p>
+      </div>
+    </section>
+
+    <section class="column right" id="code-pane">
+      <label for="editor">Your solution</label>
+      <div class="editor-wrap">
+        <pre id="gutter" aria-hidden="true"></pre>
+        <textarea id="editor" spellcheck="false" autocapitalize="off"
+                  autocorrect="off" autocomplete="off" wrap="off"></textarea>
+      </div>
+      <div class="actions">
+        <button id="run" class="primary">Run tests</button>
+        <button id="viz-mine" class="ghost">Visualize my run</button>
+      </div>
+      <div id="results"></div>
+    </section>
+
+  </main>
+</div>
 
 <script type="module" src="app.js"></script>
 </body>

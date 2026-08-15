@@ -1,106 +1,357 @@
+/* CodeTeach — styled after Open WebUI: neutral dark greys, generous rounding,
+   a persistent left sidebar for navigation, system sans throughout, and a
+   restrained blue as the only chromatic accent. */
+
 :root {
-  --bg: #12141a; --pane: #1a1d26; --ink: #e8eaf0; --muted: #8b91a3;
-  --accent: #6ea8fe; --hl: #f0b429; --ok: #4ade80; --bad: #f87171;
-  --line: #2a2e3a;
+  --sidebar:   #171717;
+  --surface:   #212121;
+  --surface-2: #2a2a2a;
+  --surface-3: #333333;
+  --border:    rgba(255, 255, 255, .09);
+  --text:      #ececec;
+  --muted:     #9b9b9b;
+  --faint:     #6b6b6b;
+
+  --accent:  #3b82f6;
+  --water:   #3b82f6;
+  --success: #10b981;
+  --danger:  #ef4444;
+  --warn:    #f59e0b;
+
+  --sans: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto,
+          Helvetica, Arial, sans-serif;
+  --mono: "SF Mono", Menlo, Monaco, Consolas, ui-monospace, monospace;
+
+  --r-sm: 6px;
+  --r-md: 10px;
+  --r-lg: 14px;
+  --r-full: 999px;
 }
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --sidebar:   #f9f9f9;
+    --surface:   #ffffff;
+    --surface-2: #f4f4f4;
+    --surface-3: #ececec;
+    --border:    rgba(0, 0, 0, .10);
+    --text:      #1f1f1f;
+    --muted:     #6b6b6b;
+    --faint:     #9b9b9b;
+  }
+}
+
 * { box-sizing: border-box; }
+
+/* A display rule must never beat the hidden attribute. */
+[hidden] { display: none !important; }
+
+/* Scrollbars belong to the surface, not to the OS. */
+* { scrollbar-width: thin; scrollbar-color: var(--surface-3) transparent; }
+*::-webkit-scrollbar { width: 10px; height: 10px; }
+*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar-thumb {
+  background: var(--surface-3); border-radius: var(--r-full);
+  border: 3px solid var(--surface);
+}
+*::-webkit-scrollbar-thumb:hover { background: var(--faint); }
+html { -webkit-text-size-adjust: 100%; }
+
 body {
-  margin: 0; background: var(--bg); color: var(--ink);
-  font: 15px/1.55 ui-sans-serif, system-ui, -apple-system, sans-serif;
+  margin: 0;
+  background: var(--surface);
+  color: var(--text);
+  font: 14.5px/1.6 var(--sans);
+  -webkit-font-smoothing: antialiased;
 }
-header {
-  display: flex; align-items: center; gap: 1rem;
-  padding: .75rem 1.25rem; border-bottom: 1px solid var(--line);
+
+select, button, textarea, input { font: inherit; color: inherit; }
+
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
 }
-h1 { font-size: 1.05rem; margin: 0; letter-spacing: .02em; }
-select, button, textarea { font: inherit; }
-select {
-  background: var(--pane); color: var(--ink);
-  border: 1px solid var(--line); border-radius: 6px; padding: .35rem .5rem;
+
+/* ---- shell ------------------------------------------------------------- */
+
+.shell { display: flex; height: 100vh; overflow: hidden; }
+
+/* ---- sidebar ----------------------------------------------------------- */
+
+.sidebar {
+  flex: 0 0 268px;
+  background: var(--sidebar);
+  border-right: 1px solid var(--border);
+  display: flex; flex-direction: column;
+  padding: .75rem;
+  overflow-y: auto;
 }
-main {
-  display: grid; grid-template-columns: minmax(280px, 1fr) 1.6fr minmax(320px, 1fr);
-  gap: 1px; background: var(--line); height: calc(100vh - 53px);
+
+.brand {
+  display: flex; align-items: center; gap: .55rem;
+  padding: .5rem .6rem .9rem;
 }
-.pane { background: var(--pane); padding: 1.1rem; overflow-y: auto; }
-h2 { font-size: 1.1rem; margin: 0 0 .6rem; }
-h3 { font-size: .8rem; text-transform: uppercase; letter-spacing: .08em;
-     color: var(--muted); margin: 1.4rem 0 .5rem; }
-.muted { color: var(--muted); font-size: .85rem; }
-code, pre, textarea, #examples { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
-#examples div { background: #0f1116; border-radius: 6px; padding: .5rem .7rem;
-                margin-bottom: .5rem; font-size: .85rem; }
-#hints p { border-left: 2px solid var(--accent); padding-left: .7rem; margin: .6rem 0; }
+.brand-mark {
+  width: 26px; height: 26px; border-radius: var(--r-sm);
+  background: var(--accent);
+  display: grid; place-items: center;
+  color: #fff; font-size: .72rem; font-weight: 700;
+}
+.brand h1 { margin: 0; font-size: .95rem; font-weight: 600; letter-spacing: -.01em; }
+
+.sidebar-label {
+  padding: .5rem .6rem .35rem;
+  font-size: .72rem; font-weight: 500; color: var(--faint);
+}
+
+#problem-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+
+#problem-list button {
+  width: 100%; text-align: left;
+  display: flex; align-items: center; gap: .55rem;
+  background: transparent; border: 0; border-radius: var(--r-md);
+  padding: .5rem .6rem;
+  font-size: .87rem; color: var(--muted);
+  cursor: pointer;
+  transition: background .12s, color .12s;
+}
+#problem-list button:hover { background: var(--surface-2); color: var(--text); }
+#problem-list button[aria-current="true"] {
+  background: var(--surface-3); color: var(--text); font-weight: 500;
+}
+.dot {
+  flex: 0 0 auto; width: 6px; height: 6px; border-radius: var(--r-full);
+  background: var(--faint);
+}
+#problem-list button[aria-current="true"] .dot { background: var(--accent); }
+
+.sidebar-foot {
+  margin-top: auto; padding: .75rem .6rem .25rem;
+  border-top: 1px solid var(--border);
+  font-size: .74rem; color: var(--faint);
+}
+
+/* ---- main -------------------------------------------------------------- */
+
+.work { flex: 1; display: grid; grid-template-columns: minmax(0, 1fr) minmax(340px, 420px); min-width: 0; }
+
+.column { overflow-y: auto; padding: 1.25rem; min-width: 0; }
+.column.right { border-left: 1px solid var(--border); }
+
+.card {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 1.15rem 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.card-head {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 1rem; margin-bottom: .75rem;
+}
+
+h2 { margin: 0; font-size: 1.15rem; font-weight: 600; letter-spacing: -.01em; }
+
+h3 {
+  margin: 1.25rem 0 .5rem;
+  font-size: .78rem; font-weight: 600; color: var(--muted);
+}
+
+#statement p { margin: 0 0 .7em; color: var(--text); }
+#statement p:last-child { margin-bottom: 0; }
+
+code {
+  font: .87em var(--mono);
+  background: var(--surface-3); border-radius: 4px; padding: .1em .35em;
+}
+
+#examples div {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: .55rem .75rem; margin-bottom: .5rem;
+  font: 12.5px/1.55 var(--mono); color: var(--muted);
+}
+
+#hints p {
+  margin: .55rem 0; padding: .65rem .8rem;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--r-md);
+}
+
+#hint-count { margin: .6rem 0 0; font-size: .78rem; color: var(--faint); }
+
+/* ---- buttons ----------------------------------------------------------- */
+
 button {
-  background: var(--accent); color: #0b0d12; border: 0; border-radius: 6px;
-  padding: .45rem .8rem; cursor: pointer; font-weight: 600;
+  background: var(--surface-3); color: var(--text);
+  border: 1px solid transparent; border-radius: var(--r-md);
+  padding: .5rem .85rem;
+  font-size: .85rem; font-weight: 500;
+  cursor: pointer;
+  transition: background .12s, opacity .12s;
 }
-button:disabled { background: var(--line); color: var(--muted); cursor: not-allowed; }
-button.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); }
+button:hover:not(:disabled) { background: var(--surface); }
 
-#viz { width: 100%; height: auto; }
-.cell rect { fill: #0f1116; stroke: var(--line); stroke-width: 2; }
-.cell.hl rect { stroke: var(--hl); stroke-width: 3; fill: #241d0d; }
-.cell .value { fill: var(--ink); font-size: 22px; font-weight: 600; }
-.cell .idx { fill: var(--muted); font-size: 12px; }
-/* bars view: shape problems — elevation maps, histograms, walls holding water */
-.bar .column { fill: #454c63; }
-.bar.hl .column { fill: var(--hl); }
-.bar .value { fill: var(--muted); font-size: 13px; }
-.bar.hl .value { fill: var(--hl); }
-.bar .idx { fill: var(--muted); font-size: 12px; }
-.water { fill: #2f6fb8; fill-opacity: .85; }
-.region { fill: #2f6fb8; fill-opacity: .28; }
-.baseline { stroke: var(--line); stroke-width: 2; }
+button.primary { background: var(--accent); color: #fff; }
+button.primary:hover:not(:disabled) { opacity: .88; background: var(--accent); }
 
-.pointer text { fill: var(--accent); font-size: 15px; font-weight: 600; }
-/* Oversized so the readout stays legible when a wide array shrinks the whole SVG. */
-.readout { fill: var(--muted); font-size: 26px; }
-#caption { margin: .4rem 0 0; font-size: 1rem; min-height: 1.55em; }
+button.ghost { background: transparent; border-color: var(--border); color: var(--muted); }
+button.ghost:hover:not(:disabled) { background: var(--surface-3); color: var(--text); }
 
-.controls { display: flex; align-items: center; gap: .5rem; margin-top: 1rem; }
-#scrub { flex: 1; }
+button:disabled { opacity: .4; cursor: not-allowed; }
+
+.icon-btn {
+  display: grid; place-items: center;
+  width: 34px; height: 34px; padding: 0;
+  border-radius: var(--r-md);
+  font-size: .8rem; line-height: 1;
+}
+
+/* ---- the animation ----------------------------------------------------- */
+
+#viz { width: 100%; height: auto; display: block; }
+
+.cell rect { fill: var(--surface); stroke: var(--surface-3); stroke-width: 1.5; rx: 8; }
+.cell.hl rect { stroke: var(--accent); stroke-width: 2; }
+.cell .value { fill: var(--text); font: 600 21px var(--sans); }
+.cell.hl .value { fill: var(--accent); }
+.cell .idx, .bar .idx { fill: var(--faint); font: 11px var(--mono); }
+
+.pointer text { fill: var(--accent); font: 600 13px var(--sans); }
+.readout { fill: var(--muted); font: 13px var(--mono); }
+
+/* Blue belongs to water alone here. A highlighted column is emphasised by
+   value instead, or it becomes indistinguishable from what it is holding. */
+.bar .column { fill: var(--surface-3); }
+.bar.hl .column { fill: var(--text); }
+.bar .value { fill: var(--faint); font: 12px var(--mono); }
+.bar.hl .value { fill: var(--text); font-weight: 600; }
+.water { fill: var(--water); fill-opacity: .85; }
+.region { fill: var(--water); fill-opacity: .2; }
+.baseline { stroke: var(--surface-3); stroke-width: 1.5; }
+
+#caption { margin: .9rem 0 0; max-width: 68ch; color: var(--text); }
+
+.controls {
+  display: flex; align-items: center; gap: .4rem;
+  margin-top: 1rem; padding-top: .9rem;
+  border-top: 1px solid var(--border);
+}
+#scrub { flex: 1; accent-color: var(--accent); }
+#step-count {
+  font: 12px var(--mono); color: var(--faint);
+  min-width: 4.5em; text-align: right;
+}
+
+/* ---- checkpoint -------------------------------------------------------- */
+
 #checkpoint {
-  margin-top: 1rem; padding: 1rem; border: 1px solid var(--hl); border-radius: 8px;
-  background: #201a0c;
+  margin-top: 1rem; padding: 1rem 1.1rem;
+  background: var(--surface);
+  border: 1px solid var(--accent);
+  border-radius: var(--r-lg);
+  animation: rise .18s ease-out;
 }
-#cp-options { display: flex; gap: .5rem; flex-wrap: wrap; margin: .7rem 0; }
+@keyframes rise {
+  from { transform: translateY(-4px); opacity: 0; }
+  to { transform: none; opacity: 1; }
+}
+
+#cp-question {
+  margin: 0; font-size: 1rem; font-weight: 600; color: var(--text);
+}
+#cp-options {
+  display: grid; gap: .4rem; margin: .85rem 0 0;
+}
+/* This is the moment the app exists for — it must never read as disabled,
+   so it overrides the muted .ghost colour app.js puts on these buttons. */
+#cp-options button.ghost,
+#cp-options button {
+  text-align: left; font-weight: 400; line-height: 1.45;
+  color: var(--text);
+  background: var(--surface-2); border: 1px solid var(--border);
+  padding: .6rem .8rem;
+}
+#cp-options button:hover:not(:disabled) {
+  border-color: var(--accent); background: var(--surface-3); color: var(--text);
+}
+#cp-feedback { margin: .75rem 0 0; font-size: .88rem; color: var(--muted); }
 #cp-feedback:empty { display: none; }
 
-/* Gutter and textarea must share font metrics exactly or the numbers drift. */
+#mine-bar {
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+  margin-bottom: 1rem; padding: .6rem .55rem .6rem .9rem;
+  background: color-mix(in srgb, var(--accent) 12%, var(--surface-2));
+  border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+  border-radius: var(--r-md);
+  font-size: .85rem;
+}
+
+/* ---- editor ------------------------------------------------------------ */
+
+#code-pane label {
+  display: block; margin-bottom: .5rem;
+  font-size: .78rem; font-weight: 600; color: var(--muted);
+}
+
 .editor-wrap {
-  display: flex; background: #0f1116;
-  border: 1px solid var(--line); border-radius: 6px; overflow: hidden;
+  display: flex;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  overflow: hidden;
 }
 .editor-wrap:focus-within { border-color: var(--accent); }
 
 #gutter, #editor {
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 13.5px; line-height: 1.5;
-  padding: .7rem 0; margin: 0; border: 0; background: none;
+  font: 13px/1.6 var(--mono);
+  padding: .8rem 0; margin: 0; border: 0; background: none;
 }
-
 #gutter {
-  flex: 0 0 auto; padding-left: .7rem; padding-right: .55rem;
-  color: var(--muted); text-align: right; user-select: none;
+  flex: 0 0 auto; padding-left: .8rem; padding-right: .65rem;
+  color: var(--faint); text-align: right; user-select: none;
   overflow: hidden; white-space: pre;
 }
-
 #editor {
-  flex: 1; min-width: 0; height: 300px; color: var(--ink);
-  padding-left: .55rem; padding-right: .7rem;
-  resize: vertical; outline: none; white-space: pre; overflow: auto;
-  tab-size: 4;
+  flex: 1; min-width: 0; height: 320px; color: var(--text);
+  padding-left: .35rem; padding-right: .8rem;
+  resize: vertical; outline: none; white-space: pre; overflow: auto; tab-size: 4;
 }
-#run, #viz-mine { margin-top: .6rem; }
-#viz-mine { margin-left: .4rem; }
-#mine-bar {
-  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
-  margin-bottom: .8rem; padding: .5rem .8rem; border-radius: 6px;
-  background: #14233a; border: 1px solid #2f6fb8; font-size: .88rem;
+
+.actions { display: flex; gap: .5rem; margin-top: .75rem; }
+
+#results { margin-top: 1rem; font-size: .85rem; color: var(--muted); }
+.result {
+  background: var(--surface); border: 1px solid var(--border);
+  border-left: 3px solid var(--surface-3);
+  border-radius: var(--r-md);
+  padding: .55rem .8rem; margin-top: .5rem;
+  font: 12.5px/1.55 var(--mono);
 }
-.result { border-left: 3px solid var(--line); padding: .5rem .7rem; margin-top: .6rem;
-          font-size: .82rem; background: #0f1116; }
-.result.pass { border-color: var(--ok); }
-.result.fail { border-color: var(--bad); }
-.result pre { margin: .3rem 0 0; white-space: pre-wrap; color: var(--muted); }
+.result.pass { border-left-color: var(--success); }
+.result.fail { border-left-color: var(--danger); }
+.result strong { font-family: var(--sans); font-size: .74rem; letter-spacing: .04em; }
+.result.pass strong { color: var(--success); }
+.result.fail strong { color: var(--danger); }
+.result pre { margin: .35rem 0 0; white-space: pre-wrap; color: var(--faint); }
+
+/* ---- responsive -------------------------------------------------------- */
+
+@media (max-width: 1100px) {
+  .work { grid-template-columns: 1fr; }
+  .column.right { border-left: 0; border-top: 1px solid var(--border); }
+}
+
+@media (max-width: 760px) {
+  .shell { flex-direction: column; height: auto; overflow: visible; }
+  .sidebar { flex: none; width: 100%; border-right: 0; border-bottom: 1px solid var(--border); }
+  #problem-list { grid-auto-flow: column; grid-auto-columns: max-content; overflow-x: auto; }
+  .column { overflow: visible; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}

@@ -264,13 +264,44 @@ $("run").onclick = async () => {
 
 const escapeHtml = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;");
 
+// Problem names read as titles, not ids: "3sum" -> "3Sum", "two-sum-ii" -> "Two Sum II".
+const WORD = { ii: "II", iii: "III" };
+const titleOf = (id) => id
+  .split("-")
+  .map(w => WORD[w]
+    ?? (/^\d/.test(w) ? w[0] + w.slice(1, 2).toUpperCase() + w.slice(2)
+                       : w[0].toUpperCase() + w.slice(1)))
+  .join(" ");
+
 $("picker").replaceChildren(...PROBLEMS.map(id => {
   const o = document.createElement("option");
-  o.value = id; o.textContent = id;
+  o.value = id; o.textContent = titleOf(id);
   return o;
 }));
-$("picker").onchange = (e) => loadProblem(e.target.value);
+$("picker").onchange = (e) => select(e.target.value);
 
-loadProblem(PROBLEMS[0]);
+// The sidebar is the visible control; the select stays as the single source of
+// truth so every path through the app agrees on which problem is open.
+$("problem-list").replaceChildren(...PROBLEMS.map(id => {
+  const li = document.createElement("li");
+  const b = document.createElement("button");
+  b.type = "button";
+  b.dataset.id = id;
+  b.innerHTML = '<span class="dot"></span>';
+  b.append(titleOf(id));
+  b.onclick = () => select(id);
+  li.appendChild(b);
+  return li;
+}));
+
+function select(id) {
+  $("picker").value = id;
+  for (const b of $("problem-list").querySelectorAll("button")) {
+    b.setAttribute("aria-current", String(b.dataset.id === id));
+  }
+  loadProblem(id);
+}
+
+select(PROBLEMS[0]);
 
 }
