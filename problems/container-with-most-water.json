@@ -1,0 +1,491 @@
+{
+  "id": "container-with-most-water",
+  "title": "Container With Most Water",
+  "statement": "You are given an integer array `height` of length `n`. There are `n` vertical lines drawn such that the two endpoints of line `i` are at `(i, 0)` and `(i, height[i])`.\n\nFind two lines that, together with the x-axis, form a container that holds the most water. Return the maximum amount of water a container can store.\n\nNote that a container cannot be tilted \u2014 its capacity is limited by the shorter of its two walls.",
+  "examples": [
+    {
+      "input": "height = [1,8,6,2,5,4,8,3,7]",
+      "output": "49"
+    },
+    {
+      "input": "height = [1,1]",
+      "output": "1"
+    }
+  ],
+  "signature": "def max_area(height):",
+  "func": "max_area",
+  "steps": [
+    {
+      "array": [
+        1,
+        8,
+        6,
+        2,
+        5,
+        4,
+        8,
+        3,
+        7
+      ],
+      "vars": {
+        "l": 0,
+        "r": 8
+      },
+      "highlight": [
+        0,
+        8
+      ],
+      "caption": "Start as wide as possible: one wall at each end."
+    },
+    {
+      "array": [
+        1,
+        8,
+        6,
+        2,
+        5,
+        4,
+        8,
+        3,
+        7
+      ],
+      "vars": {
+        "l": 0,
+        "r": 8
+      },
+      "highlight": [
+        0,
+        8
+      ],
+      "caption": "Width 8 times the shorter wall (1) = 8. Best so far: 8."
+    },
+    {
+      "array": [
+        1,
+        8,
+        6,
+        2,
+        5,
+        4,
+        8,
+        3,
+        7
+      ],
+      "vars": {
+        "l": 1,
+        "r": 8
+      },
+      "highlight": [
+        1,
+        8
+      ],
+      "caption": "The left wall was shorter, so it was the one capping the water \u2014 move it inward looking for something taller."
+    },
+    {
+      "array": [
+        1,
+        8,
+        6,
+        2,
+        5,
+        4,
+        8,
+        3,
+        7
+      ],
+      "vars": {
+        "l": 1,
+        "r": 8
+      },
+      "highlight": [
+        1,
+        8
+      ],
+      "caption": "Width 7 times the shorter wall (7) = 49. Best so far: 49."
+    },
+    {
+      "array": [
+        1,
+        8,
+        6,
+        2,
+        5,
+        4,
+        8,
+        3,
+        7
+      ],
+      "vars": {
+        "l": 1,
+        "r": 7
+      },
+      "highlight": [
+        1,
+        7
+      ],
+      "caption": "The right wall was shorter, so it was the one capping the water \u2014 move it inward looking for something taller."
+    },
+    {
+      "array": [
+        1,
+        8,
+        6,
+        2,
+        5,
+        4,
+        8,
+        3,
+        7
+      ],
+      "vars": {
+        "l": 1,
+        "r": 7
+      },
+      "highlight": [
+        1,
+        7
+      ],
+      "caption": "Width 6 times the shorter wall (3) = 18. Best so far: 49."
+    },
+    {
+      "array": [
+        1,
+        8,
+        6,
+        2,
+        5,
+        4,
+        8,
+        3,
+        7
+      ],
+      "vars": {
+        "l": 1,
+        "r": 6
+      },
+      "highlight": [
+        1,
+        6
+      ],
+      "caption": "The right wall was shorter, so it was the one capping the water \u2014 move it inward looking for something taller."
+    },
+    {
+      "array": [
+        1,
+        8,
+        6,
+        2,
+        5,
+        4,
+        8,
+        3,
+        7
+      ],
+      "vars": {
+        "l": 1,
+        "r": 6
+      },
+      "highlight": [
+        1,
+        6
+      ],
+      "caption": "Width 5 times the shorter wall (8) = 40. Best so far: 49."
+    },
+    {
+      "array": [
+        1,
+        8,
+        6,
+        2,
+        5,
+        4,
+        8,
+        3,
+        7
+      ],
+      "vars": {
+        "l": 2,
+        "r": 6
+      },
+      "highlight": [
+        2,
+        6
+      ],
+      "caption": "The walls are tied, so either side is equally responsible for the cap \u2014 move the left one inward."
+    },
+    {
+      "array": [
+        1,
+        8,
+        6,
+        2,
+        5,
+        4,
+        8,
+        3,
+        7
+      ],
+      "vars": {
+        "l": 2,
+        "r": 6
+      },
+      "highlight": [
+        2,
+        6
+      ],
+      "caption": "Width 4 times the shorter wall (6) = 24. Best so far: 49."
+    },
+    {
+      "array": [
+        1,
+        8,
+        6,
+        2,
+        5,
+        4,
+        8,
+        3,
+        7
+      ],
+      "vars": {
+        "l": 3,
+        "r": 6
+      },
+      "highlight": [
+        3,
+        6
+      ],
+      "caption": "The left wall was shorter, so it was the one capping the water \u2014 move it inward looking for something taller."
+    },
+    {
+      "array": [
+        1,
+        8,
+        6,
+        2,
+        5,
+        4,
+        8,
+        3,
+        7
+      ],
+      "vars": {
+        "l": 3,
+        "r": 6
+      },
+      "highlight": [
+        3,
+        6
+      ],
+      "caption": "Width 3 times the shorter wall (2) = 6. Best so far: 49."
+    },
+    {
+      "array": [
+        1,
+        8,
+        6,
+        2,
+        5,
+        4,
+        8,
+        3,
+        7
+      ],
+      "vars": {
+        "l": 4,
+        "r": 6
+      },
+      "highlight": [
+        4,
+        6
+      ],
+      "caption": "The left wall was shorter, so it was the one capping the water \u2014 move it inward looking for something taller."
+    },
+    {
+      "array": [
+        1,
+        8,
+        6,
+        2,
+        5,
+        4,
+        8,
+        3,
+        7
+      ],
+      "vars": {
+        "l": 4,
+        "r": 6
+      },
+      "highlight": [
+        4,
+        6
+      ],
+      "caption": "Width 2 times the shorter wall (5) = 10. Best so far: 49."
+    },
+    {
+      "array": [
+        1,
+        8,
+        6,
+        2,
+        5,
+        4,
+        8,
+        3,
+        7
+      ],
+      "vars": {
+        "l": 5,
+        "r": 6
+      },
+      "highlight": [
+        5,
+        6
+      ],
+      "caption": "The left wall was shorter, so it was the one capping the water \u2014 move it inward looking for something taller."
+    },
+    {
+      "array": [
+        1,
+        8,
+        6,
+        2,
+        5,
+        4,
+        8,
+        3,
+        7
+      ],
+      "vars": {
+        "l": 5,
+        "r": 6
+      },
+      "highlight": [
+        5,
+        6
+      ],
+      "caption": "Width 1 times the shorter wall (4) = 4. Best so far: 49."
+    },
+    {
+      "array": [
+        1,
+        8,
+        6,
+        2,
+        5,
+        4,
+        8,
+        3,
+        7
+      ],
+      "vars": {
+        "l": 6,
+        "r": 6
+      },
+      "highlight": [
+        6,
+        6
+      ],
+      "caption": "The left wall was shorter, so it was the one capping the water \u2014 move it inward looking for something taller."
+    },
+    {
+      "array": [
+        1,
+        8,
+        6,
+        2,
+        5,
+        4,
+        8,
+        3,
+        7
+      ],
+      "vars": {
+        "l": 6,
+        "r": 6
+      },
+      "highlight": [
+        6,
+        6
+      ],
+      "caption": "Markers met. Best area found was 49."
+    }
+  ],
+  "checkpoints": [
+    {
+      "afterStep": 3,
+      "question": "height[l]=8 and height[r]=7. Which wall should move?",
+      "options": [
+        "l, the taller wall (8)",
+        "r, the shorter wall (7)"
+      ],
+      "answer": "r, the shorter wall (7)",
+      "why": "The shorter wall is what caps the water. Moving the taller wall only shrinks the width while the cap stays the same or gets worse; moving the shorter wall is the only move that could find something taller."
+    },
+    {
+      "afterStep": 7,
+      "question": "The walls are tied (8 and 8). Which pointer(s) could move without losing correctness?",
+      "options": [
+        "Only r may move",
+        "Either l or r works"
+      ],
+      "answer": "Either l or r works",
+      "why": "When both walls are equally tall, either one is equally responsible for the cap, so moving either marker inward keeps the search correct."
+    }
+  ],
+  "hints": [
+    "The water held between two walls is capped by the shorter one, no matter how tall the other wall is. Starting from the widest possible container, ask which wall is wasting potential.",
+    "If you move the taller wall inward, the width shrinks and the height is still capped by the (unchanged) shorter wall \u2014 the area can only get worse or stay the same. Moving the shorter wall is the only move that has a chance of finding something taller.",
+    "Start with one marker at each end. Repeatedly measure the area using the shorter of the two current walls times the distance between them, remember the best you've seen, then move the marker at the shorter wall one step inward. Stop when the markers meet."
+  ],
+  "tests": [
+    {
+      "args": [
+        [
+          1,
+          8,
+          6,
+          2,
+          5,
+          4,
+          8,
+          3,
+          7
+        ]
+      ],
+      "expect": 49
+    },
+    {
+      "args": [
+        [
+          1,
+          1
+        ]
+      ],
+      "expect": 1
+    },
+    {
+      "args": [
+        [
+          4,
+          3,
+          2,
+          1,
+          4
+        ]
+      ],
+      "expect": 16
+    },
+    {
+      "args": [
+        [
+          1,
+          2,
+          1
+        ]
+      ],
+      "expect": 2
+    }
+  ]
+}

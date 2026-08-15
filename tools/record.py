@@ -44,8 +44,156 @@ def trace_two_sum_ii(rec):
                      "Sum was too small, so move l inward to a bigger number.", [l, r])
 
 
+def trace_valid_palindrome(rec):
+    s = "race a car"
+    arr = list(s)
+    l, r = 0, len(arr) - 1
+    rec.step(arr, {"l": l, "r": r}, "Start with one marker at each end.", [l, r])
+    while l < r:
+        if not arr[l].isalnum():
+            l += 1
+            rec.step(arr, {"l": l, "r": r},
+                     "That character isn't a letter or digit, so skip it and slide l right.", [l, r])
+            continue
+        if not arr[r].isalnum():
+            r -= 1
+            rec.step(arr, {"l": l, "r": r},
+                     "That character isn't a letter or digit, so skip it and slide r left.", [l, r])
+            continue
+        if arr[l].lower() != arr[r].lower():
+            rec.step(arr, {"l": l, "r": r},
+                     f"'{arr[l]}' and '{arr[r]}' disagree, so this can't be a palindrome.", [l, r])
+            return
+        l += 1
+        r -= 1
+        rec.step(arr, {"l": l, "r": r}, "Those matched, so move both markers inward.", [l, r])
+    rec.step(arr, {"l": l, "r": r}, "Markers crossed without ever disagreeing, so it is a palindrome.", [l, r])
+
+
+def trace_container_with_most_water(rec):
+    height = [1, 8, 6, 2, 5, 4, 8, 3, 7]
+    l, r = 0, len(height) - 1
+    best = 0
+    rec.step(height, {"l": l, "r": r}, "Start as wide as possible: one wall at each end.", [l, r])
+    while l < r:
+        area = min(height[l], height[r]) * (r - l)
+        best = max(best, area)
+        rec.step(height, {"l": l, "r": r},
+                 f"Width {r - l} times the shorter wall ({min(height[l], height[r])}) = {area}. Best so far: {best}.",
+                 [l, r])
+        if height[l] < height[r]:
+            l += 1
+            rec.step(height, {"l": l, "r": r},
+                     "The left wall was shorter, so it was the one capping the water — move it inward looking for something taller.",
+                     [l, r])
+        elif height[l] > height[r]:
+            r -= 1
+            rec.step(height, {"l": l, "r": r},
+                     "The right wall was shorter, so it was the one capping the water — move it inward looking for something taller.",
+                     [l, r])
+        else:
+            l += 1
+            rec.step(height, {"l": l, "r": r},
+                     "The walls are tied, so either side is equally responsible for the cap — move the left one inward.",
+                     [l, r])
+    rec.step(height, {"l": l, "r": r}, f"Markers met. Best area found was {best}.", [l, r])
+
+
+def trace_three_sum(rec):
+    nums = sorted([-1, 0, 1, 2, -1, -4])
+    n = len(nums)
+    found = 0
+    i = 0
+    while i < n - 2:
+        if nums[i] > 0:
+            rec.step(nums, {"i": i},
+                     "This fixed number is positive; the array is sorted, so every remaining sum can only be larger. Stop.",
+                     [i])
+            break
+        if i > 0 and nums[i] == nums[i - 1]:
+            rec.step(nums, {"i": i},
+                     "This fixed number repeats the previous one — skip it so we don't rediscover the same triples.",
+                     [i])
+            i += 1
+            continue
+        l, r = i + 1, n - 1
+        rec.step(nums, {"i": i, "l": l, "r": r}, "Fix this number, then scan the rest with l and r.", [i, l, r])
+        while l < r:
+            total = nums[i] + nums[l] + nums[r]
+            if total == 0:
+                found += 1
+                rec.step(nums, {"i": i, "l": l, "r": r},
+                         "These three sum to zero — record the triple, then move both markers inward to keep looking.",
+                         [i, l, r])
+                l += 1
+                r -= 1
+                while l < r and nums[l] == nums[l - 1]:
+                    l += 1
+                while l < r and nums[r] == nums[r + 1]:
+                    r -= 1
+                if l < r:
+                    rec.step(nums, {"i": i, "l": l, "r": r}, "Markers moved inward past the match.", [i, l, r])
+            elif total < 0:
+                l += 1
+                rec.step(nums, {"i": i, "l": l, "r": r},
+                         "The total is negative, so shrink from the left to reach for a bigger number.", [i, l, r])
+            else:
+                r -= 1
+                rec.step(nums, {"i": i, "l": l, "r": r},
+                         "The total is positive, so shrink from the right to reach for a smaller number.", [i, l, r])
+        i += 1
+    last = min(i, n - 1)
+    rec.step(nums, {"i": last}, f"Done scanning. Found {found} triple(s).", [last])
+
+
+def trace_trapping_rain_water(rec):
+    height = [0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1]
+    l, r = 0, len(height) - 1
+    left_max = right_max = water = 0
+    rec.step(height, {"l": l, "r": r},
+             "One marker at each end; track the tallest wall seen so far from each side.", [l, r])
+    while l < r:
+        if height[l] < height[r]:
+            if height[l] >= left_max:
+                left_max = height[l]
+                rec.step(height, {"l": l, "r": r},
+                         f"height[l]={height[l]} is a new tallest-from-the-left wall ({left_max}); nothing traps here.",
+                         [l, r])
+            else:
+                gained = left_max - height[l]
+                water += gained
+                rec.step(height, {"l": l, "r": r},
+                         f"height[l]={height[l]} is shorter than the tallest left wall so far ({left_max}); "
+                         f"{gained} unit(s) of water sit here (running total {water}).", [l, r])
+            l += 1
+            rec.step(height, {"l": l, "r": r},
+                     "The left side had the shorter running wall, so it was the one deciding the water level — move it inward.",
+                     [l, r])
+        else:
+            if height[r] >= right_max:
+                right_max = height[r]
+                rec.step(height, {"l": l, "r": r},
+                         f"height[r]={height[r]} is a new tallest-from-the-right wall ({right_max}); nothing traps here.",
+                         [l, r])
+            else:
+                gained = right_max - height[r]
+                water += gained
+                rec.step(height, {"l": l, "r": r},
+                         f"height[r]={height[r]} is shorter than the tallest right wall so far ({right_max}); "
+                         f"{gained} unit(s) of water sit here (running total {water}).", [l, r])
+            r -= 1
+            rec.step(height, {"l": l, "r": r},
+                     "The right side had the shorter running wall, so it was the one deciding the water level — move it inward.",
+                     [l, r])
+    rec.step(height, {"l": l, "r": r}, f"Markers met. Total trapped water: {water}.", [l, r])
+
+
 SOLUTIONS = {
     "two-sum-ii": trace_two_sum_ii,
+    "valid-palindrome": trace_valid_palindrome,
+    "container-with-most-water": trace_container_with_most_water,
+    "3sum": trace_three_sum,
+    "trapping-rain-water": trace_trapping_rain_water,
 }
 
 # Checkpoints are authored by hand against the recorded trace, keyed by problem id.
@@ -58,6 +206,51 @@ CHECKPOINTS = {
         {"afterStep": 3, "question": "Now the sum is 13, still above 9. What happens next?",
          "options": ["l, rightward", "r, leftward"], "answer": "r, leftward",
          "why": "Same reasoning as before — that is the whole invariant. Too big means shrink from the right."},
+    ],
+    "valid-palindrome": [
+        {"afterStep": 3, "question": "r now points at a space. What should happen?",
+         "options": ["Compare it directly against the character at l", "Skip it — slide r left and check again"],
+         "answer": "Skip it — slide r left and check again",
+         "why": "Only letters and digits count toward the comparison. A space carries no information either way, so it's simply skipped."},
+        {"afterStep": 4, "question": "Now l points at 'e' and r points at 'a'. What determines the final answer?",
+         "options": ["They must match for this to be a palindrome; since they differ, the answer is false right now",
+                     "Keep going — a mismatch here doesn't necessarily rule out a palindrome"],
+         "answer": "They must match for this to be a palindrome; since they differ, the answer is false right now",
+         "why": "Every mirrored pair has to agree. One disagreement is enough to prove it's not a palindrome, so you can stop immediately."},
+    ],
+    "container-with-most-water": [
+        {"afterStep": 3, "question": "height[l]=8 and height[r]=7. Which wall should move?",
+         "options": ["l, the taller wall (8)", "r, the shorter wall (7)"],
+         "answer": "r, the shorter wall (7)",
+         "why": "The shorter wall is what caps the water. Moving the taller wall only shrinks the width while the cap stays the same or gets worse; moving the shorter wall is the only move that could find something taller."},
+        {"afterStep": 7, "question": "The walls are tied (8 and 8). Which pointer(s) could move without losing correctness?",
+         "options": ["Only r may move", "Either l or r works"],
+         "answer": "Either l or r works",
+         "why": "When both walls are equally tall, either one is equally responsible for the cap, so moving either marker inward keeps the search correct."},
+    ],
+    "3sum": [
+        {"afterStep": 4, "question": "The total is still negative and l has caught up to r. What happens next?",
+         "options": ["Keep shrinking r past l", "Stop this pass — there's no room left between the markers — and move to the next fixed number"],
+         "answer": "Stop this pass — there's no room left between the markers — and move to the next fixed number",
+         "why": "Once the markers meet, there are no more pairs left to try for this fixed number, so the sweep moves on to the next one."},
+        {"afterStep": 6, "question": "The total is exactly zero. What should happen to the markers?",
+         "options": ["Stop entirely — this is the only triple", "Record the triple, then move both markers inward to keep looking"],
+         "answer": "Record the triple, then move both markers inward to keep looking",
+         "why": "One zero-sum triple doesn't rule out others. Recording it and continuing to sweep inward can turn up more."},
+        {"afterStep": 8, "question": "The next fixed number, nums[2], equals nums[1] (both -1). What should happen when the sweep reaches it?",
+         "options": ["Process it normally — it might find a new triple", "Skip it — any triple it starts would duplicate one already found"],
+         "answer": "Skip it — any triple it starts would duplicate one already found",
+         "why": "Fixing the same value twice in a row explores the same territory nums[1] already covered, producing duplicate triples."},
+    ],
+    "trapping-rain-water": [
+        {"afterStep": 6, "question": "height[l]=0, and the tallest left wall seen so far is 1. What happens here?",
+         "options": ["Nothing traps — height[l] becomes the new left_max", "Water traps here, up to the left_max"],
+         "answer": "Water traps here, up to the left_max",
+         "why": "This bar is shorter than the tallest wall already seen on the left, so water sits on top of it up to that wall's height."},
+        {"afterStep": 10, "question": "height[l]=2 and height[r]=1. Which side gets processed next?",
+         "options": ["l, the taller side", "r, the shorter side"],
+         "answer": "r, the shorter side",
+         "why": "The side with the lower current bar is the one whose water level is already decided — the far side is guaranteed at least as tall, so it can't be the limiting wall."},
     ],
 }
 

@@ -1,0 +1,216 @@
+{
+  "id": "valid-palindrome",
+  "title": "Valid Palindrome",
+  "statement": "Given a string `s`, return `true` if it is a palindrome once you ignore case and consider only letters and digits, and `false` otherwise.\n\nAn empty string (after removing non-alphanumeric characters) reads as a palindrome.",
+  "examples": [
+    {
+      "input": "s = \"A man, a plan, a canal: Panama\"",
+      "output": "true"
+    },
+    {
+      "input": "s = \"race a car\"",
+      "output": "false"
+    }
+  ],
+  "signature": "def is_palindrome(s):",
+  "func": "is_palindrome",
+  "steps": [
+    {
+      "array": [
+        "r",
+        "a",
+        "c",
+        "e",
+        " ",
+        "a",
+        " ",
+        "c",
+        "a",
+        "r"
+      ],
+      "vars": {
+        "l": 0,
+        "r": 9
+      },
+      "highlight": [
+        0,
+        9
+      ],
+      "caption": "Start with one marker at each end."
+    },
+    {
+      "array": [
+        "r",
+        "a",
+        "c",
+        "e",
+        " ",
+        "a",
+        " ",
+        "c",
+        "a",
+        "r"
+      ],
+      "vars": {
+        "l": 1,
+        "r": 8
+      },
+      "highlight": [
+        1,
+        8
+      ],
+      "caption": "Those matched, so move both markers inward."
+    },
+    {
+      "array": [
+        "r",
+        "a",
+        "c",
+        "e",
+        " ",
+        "a",
+        " ",
+        "c",
+        "a",
+        "r"
+      ],
+      "vars": {
+        "l": 2,
+        "r": 7
+      },
+      "highlight": [
+        2,
+        7
+      ],
+      "caption": "Those matched, so move both markers inward."
+    },
+    {
+      "array": [
+        "r",
+        "a",
+        "c",
+        "e",
+        " ",
+        "a",
+        " ",
+        "c",
+        "a",
+        "r"
+      ],
+      "vars": {
+        "l": 3,
+        "r": 6
+      },
+      "highlight": [
+        3,
+        6
+      ],
+      "caption": "Those matched, so move both markers inward."
+    },
+    {
+      "array": [
+        "r",
+        "a",
+        "c",
+        "e",
+        " ",
+        "a",
+        " ",
+        "c",
+        "a",
+        "r"
+      ],
+      "vars": {
+        "l": 3,
+        "r": 5
+      },
+      "highlight": [
+        3,
+        5
+      ],
+      "caption": "That character isn't a letter or digit, so skip it and slide r left."
+    },
+    {
+      "array": [
+        "r",
+        "a",
+        "c",
+        "e",
+        " ",
+        "a",
+        " ",
+        "c",
+        "a",
+        "r"
+      ],
+      "vars": {
+        "l": 3,
+        "r": 5
+      },
+      "highlight": [
+        3,
+        5
+      ],
+      "caption": "'e' and 'a' disagree, so this can't be a palindrome."
+    }
+  ],
+  "checkpoints": [
+    {
+      "afterStep": 3,
+      "question": "r now points at a space. What should happen?",
+      "options": [
+        "Compare it directly against the character at l",
+        "Skip it \u2014 slide r left and check again"
+      ],
+      "answer": "Skip it \u2014 slide r left and check again",
+      "why": "Only letters and digits count toward the comparison. A space carries no information either way, so it's simply skipped."
+    },
+    {
+      "afterStep": 4,
+      "question": "Now l points at 'e' and r points at 'a'. What determines the final answer?",
+      "options": [
+        "They must match for this to be a palindrome; since they differ, the answer is false right now",
+        "Keep going \u2014 a mismatch here doesn't necessarily rule out a palindrome"
+      ],
+      "answer": "They must match for this to be a palindrome; since they differ, the answer is false right now",
+      "why": "Every mirrored pair has to agree. One disagreement is enough to prove it's not a palindrome, so you can stop immediately."
+    }
+  ],
+  "hints": [
+    "Only letters and digits count \u2014 punctuation and spaces are just noise you should ignore, and case doesn't matter either.",
+    "Keep one marker at the front and one at the back. As long as the characters they land on match, everything seen so far is consistent with a palindrome; a single mismatch proves it is not one.",
+    "Walk the two markers toward the middle. Before comparing, slide either marker past any character that isn't a letter or digit. Compare what is left, lowercased; if they ever disagree, the answer is no. If the markers cross without disagreeing, the answer is yes."
+  ],
+  "tests": [
+    {
+      "args": [
+        "A man, a plan, a canal: Panama"
+      ],
+      "expect": true
+    },
+    {
+      "args": [
+        "race a car"
+      ],
+      "expect": false
+    },
+    {
+      "args": [
+        ""
+      ],
+      "expect": true
+    },
+    {
+      "args": [
+        "0P"
+      ],
+      "expect": false
+    },
+    {
+      "args": [
+        "ab_a"
+      ],
+      "expect": true
+    }
+  ]
+}

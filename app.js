@@ -1,7 +1,7 @@
 import { render } from "./visualizer.js";
 import { ready, run } from "./runner.js";
 
-const PROBLEMS = ["two-sum-ii"];
+const PROBLEMS = ["valid-palindrome", "two-sum-ii", "container-with-most-water", "3sum", "trapping-rain-water"];
 
 /** Index of the checkpoint that blocks advancing past `index`, or null. */
 export function nextBlockingCheckpoint(checkpoints, answered, index) {
