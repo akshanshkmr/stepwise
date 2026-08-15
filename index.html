@@ -44,7 +44,11 @@
 
   <section class="pane" id="code-pane">
     <label for="editor">Your solution</label>
-    <textarea id="editor" spellcheck="false"></textarea>
+    <div class="editor-wrap">
+      <pre id="gutter" aria-hidden="true"></pre>
+      <textarea id="editor" spellcheck="false" autocapitalize="off"
+                autocorrect="off" autocomplete="off" wrap="off"></textarea>
+    </div>
     <button id="run">Run tests</button>
     <div id="results"></div>
   </section>

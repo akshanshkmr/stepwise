@@ -49,7 +49,8 @@ async function loadProblem(id) {
     .split("\n\n").map(p => `<p>${inline(p)}</p>`).join("");
   $("examples").innerHTML = problem.examples
     .map(e => `<div>Input: ${e.input}<br>Output: ${e.output}</div>`).join("");
-  $("editor").value = code || `${problem.signature}\n    `;
+  $("editor").value = code || `${problem.signature}\n${INDENT}`;
+  drawGutter();
   $("scrub").max = String(problem.steps.length - 1);
   $("results").replaceChildren();
   renderHints();
@@ -127,7 +128,56 @@ $("first").onclick = () => go(0);
 $("last").onclick = () => go(problem.steps.length - 1);
 $("scrub").oninput = (e) => go(Number(e.target.value));
 $("hint-btn").onclick = () => { hintsUsed++; save(); renderHints(); };
-$("editor").oninput = () => save();
+$("editor").oninput = () => { save(); drawGutter(); };
+$("editor").onscroll = () => { $("gutter").scrollTop = $("editor").scrollTop; };
+
+function drawGutter() {
+  const lines = $("editor").value.split("\n").length;
+  $("gutter").textContent = Array.from({ length: lines }, (_, i) => i + 1).join("\n");
+}
+
+// ponytail: Tab and auto-indent only — the two things a plain textarea gets
+// wrong for Python. No syntax highlighting: that needs a real editor library,
+// and this stays a zero-dependency static page. Swap in CodeMirror if you
+// ever want colour, not before.
+const INDENT = "    ";
+
+$("editor").onkeydown = (e) => {
+  const ed = e.target;
+  const { selectionStart: a, selectionEnd: b, value: v } = ed;
+
+  const replace = (text, caret) => {
+    ed.setRangeText(text, a, b, "end");
+    if (caret !== undefined) ed.selectionStart = ed.selectionEnd = caret;
+    ed.dispatchEvent(new Event("input"));
+  };
+
+  if (e.key === "Tab") {
+    e.preventDefault();
+    if (e.shiftKey) {
+      // Dedent the current line by up to one indent level.
+      const lineStart = v.lastIndexOf("\n", a - 1) + 1;
+      const lead = v.slice(lineStart, lineStart + INDENT.length);
+      const cut = lead.startsWith(INDENT) ? INDENT.length : lead.search(/[^ ]|$/);
+      if (cut) {
+        ed.setRangeText("", lineStart, lineStart + cut, "preserve");
+        ed.dispatchEvent(new Event("input"));
+      }
+      return;
+    }
+    replace(INDENT);
+    return;
+  }
+
+  if (e.key === "Enter") {
+    e.preventDefault();
+    const lineStart = v.lastIndexOf("\n", a - 1) + 1;
+    const line = v.slice(lineStart, a);
+    let indent = line.match(/^ */)[0];
+    if (line.trimEnd().endsWith(":")) indent += INDENT;
+    replace("\n" + indent);
+  }
+};
 
 $("run").onclick = async () => {
   const btn = $("run");
