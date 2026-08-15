@@ -1,4 +1,4 @@
-# CodeTeach
+# Stepwise
 
 Learn the Two Pointers pattern by watching it work, predicting the next move, and
 writing the code yourself. The app never shows you a solution.

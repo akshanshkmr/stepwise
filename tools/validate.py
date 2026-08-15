@@ -1,4 +1,4 @@
-"""Validate every problems/*.json against the CodeTeach content contract."""
+"""Validate every problems/*.json against the Stepwise content contract."""
 import json
 import pathlib
 import re

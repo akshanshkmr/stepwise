@@ -54,9 +54,10 @@ let solved = false;
 // Non-null while showing the learner's own traced run instead of the reference.
 let mine = null;
 
-const storageKey = () => `codeteach:${problem.id}`;
+const PREFIX = "stepwise:";
+const storageKey = () => `${PREFIX}${problem.id}`;
 
-const COLLAPSED_KEY = "codeteach:collapsed";
+const COLLAPSED_KEY = `${PREFIX}collapsed`;
 
 
 function readCollapsed() {
@@ -67,7 +68,7 @@ function readCollapsed() {
 /** Progress for one problem, readable without loading it — the sidebar needs
  *  every problem's state before any of them is open. */
 function progressOf(id) {
-  try { return migrate(JSON.parse(localStorage.getItem(`codeteach:${id}`) ?? "{}")) ?? {}; }
+  try { return migrate(JSON.parse(localStorage.getItem(PREFIX + id) ?? "{}")) ?? {}; }
   catch { return {}; }
 }
 
@@ -399,7 +400,21 @@ function select(id) {
  *  order, each pattern holding its problems. Patterns with nothing in them yet
  *  are shown but not clickable — they say what is coming, they do not pretend
  *  to be ready. */
+/** The app was called CodeTeach until it was renamed. Carry anyone's existing
+ *  progress over once, rather than silently starting them from zero. */
+function adoptOldKeys() {
+  const old = Object.keys(localStorage).filter(k => k.startsWith("codeteach:"));
+  for (const k of old) {
+    const moved = PREFIX + k.slice("codeteach:".length);
+    if (localStorage.getItem(moved) === null) {
+      localStorage.setItem(moved, localStorage.getItem(k));
+    }
+    localStorage.removeItem(k);
+  }
+}
+
 async function buildSidebar() {
+  adoptOldKeys();
   let index;
   try {
     const res = await fetch("problems/index.json");

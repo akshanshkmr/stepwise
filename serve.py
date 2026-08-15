@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Serve only the CodeTeach app — not the whole repo.
+"""Serve only the Stepwise app — not the whole repo.
 
 ponytail: this is answer-hiding for a local teaching tool, not a security
 boundary. It stops a curious learner from browsing to dev/ or tools/ and

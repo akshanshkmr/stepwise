@@ -1,4 +1,4 @@
-# CodeTeach — working in this repo
+# Stepwise — working in this repo
 
 A static app that teaches algorithm patterns by animating them, stopping to make
 the learner predict the next move, and giving prose hints. **It never shows

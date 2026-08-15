@@ -2,6 +2,10 @@
 
 Date: 2026-08-15
 
+> Renamed to **Stepwise** on 2026-08-16. This document keeps the original
+> name as the record of what was designed; the code, README and CLAUDE.md use
+> the new one.
+
 ## Purpose
 
 A coding-practice app that teaches the *core idea* of an algorithm instead of its
