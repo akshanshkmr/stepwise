@@ -382,6 +382,13 @@ button:disabled { opacity: .4; cursor: not-allowed; }
 #highlight {
   pointer-events: none; overflow: hidden; color: var(--text);
 }
+/* The overlay's <code> must not pick up the inline-code chip styling used in
+   problem statements — that painted a grey box behind every line and its
+   padding pushed the text out of register with the textarea. */
+#highlight code {
+  background: none; padding: 0; border-radius: 0;
+  font: inherit; color: inherit;
+}
 #editor {
   color: transparent; caret-color: var(--text); resize: none;
   -webkit-text-fill-color: transparent;
