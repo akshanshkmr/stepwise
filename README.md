@@ -23,11 +23,31 @@ so the URL bar can't reach `dev/` or `tools/`.
 
 ## Add a problem
 
-1. Add a `trace_<name>(rec)` function and a `CHECKPOINTS` entry in `tools/record.py`.
-2. Create `problems/<id>.json` with everything except `steps` and `checkpoints`.
-3. `python3 tools/record.py` to generate the trace.
-4. `python3 tools/validate.py` to check it.
-5. Add the id to `PROBLEMS` in `app.js`.
+Write an ordinary solution — no instrumentation. `tracer.py` watches its locals
+and turns them into animation frames.
+
+1. In `tools/record.py`, add a plain `solve_<name>(...)` function and an `AUTO`
+   entry giving it an example input.
+2. Create `problems/<id>.json` with everything except `steps` (leave it `[]`):
+   statement, examples, signature, func, view, hints, tests.
+3. `python3 tools/record.py` — the trace appears, with mechanical captions.
+4. Read the generated frames and write real captions for the handful that sit at
+   decisions, via `CAPTIONS[<id>][<frame index>]`. This is the teaching, and it
+   is the one part no tool can do: the tracer sees `r -= 1`, not *why*.
+5. Add 2–3 `CHECKPOINTS` entries at the moments where the naive guess is wrong.
+6. `python3 tools/validate.py`, then add the id to `PROBLEMS` in `app.js`.
+
+`move-zeroes` is the worked example of this path. The five older problems use
+the hand-written `trace_<name>(rec)` route instead, which is still supported and
+still the only way to emit view-specific overlays such as the bars view's
+`water` and `region`.
+
+### Views
+
+A problem declares `"view": "cells"` or `"bars"`. Adding a new shape (grid,
+tree, graph) means adding `views/<name>.js` and an entry in
+`views/manifest.json` — the dispatcher, the app, the recorder and the validator
+all read that manifest and need no edit.
 
 ## Checks
 

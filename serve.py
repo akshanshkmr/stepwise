@@ -16,6 +16,8 @@ PORT = 8000
 # under the repo root is 404, even if it exists on disk.
 ALLOWED_FILES = {
     "/", "/index.html", "/app.js", "/visualizer.js", "/runner.js", "/style.css",
+    # The tracer, not a solution: it animates whatever function it is handed.
+    "/tracer.py",
 }
 ALLOWED_DIRS = ("/problems/", "/views/")
 

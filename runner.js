@@ -12,6 +12,12 @@ export function ready(onProgress) {
     onProgress?.("Downloading Python (about 10 MB, first time only)…");
     const { loadPyodide } = await import(`${PYODIDE_URL}pyodide.mjs`);
     const py = await loadPyodide({ indexURL: PYODIDE_URL });
+    // Shared with tools/record.py — see tracer.py.
+    const tracerSrc = await (await fetch(new URL("tracer.py", import.meta.url))).text();
+    py.runPython(`import types, sys
+_tracer = types.ModuleType("codeteach_tracer")
+exec(${JSON.stringify(tracerSrc)}, _tracer.__dict__)
+sys.modules["codeteach_tracer"] = _tracer`);
     py.runPython(HARNESS);
     onProgress?.("Python ready.");
     return py;
@@ -28,79 +34,12 @@ export function ready(onProgress) {
 const HARNESS = `
 import json, sys, traceback
 
-class _Timeout(BaseException):
-    pass
+_Timeout = _tracer.Timeout
 
 
-# --- automatic tracer ----------------------------------------------------
-# Turns an UNINSTRUMENTED function into animation frames by watching its
-# locals line by line. The learner writes ordinary Python; nothing is
-# injected into their code.
-#
-# ponytail: this infers intent from shape — the longest list of scalars is
-# the array, ints that index it are pointers, other scalars are the readout.
-# It cannot know algorithm-specific overlays like the bars view's water.
-# Frames come out mechanical on purpose: the recorder's hand-written captions
-# stay the teaching surface, this one just shows what your code did.
-
-_MAX_FRAMES = 400
-
-
-def _scalar(v):
-    return isinstance(v, (int, float, str, bool)) and not isinstance(v, bool)
-
-
-def _as_cells(seq):
-    return [c for c in seq] if isinstance(seq, str) else list(seq)
-
-
-def _pick_array(local_vars, fallback):
-    """The live array: the longest list of scalars in scope, else the argument.
-    Picking it per frame means a solution that sorts a copy animates the copy."""
-    best = None
-    for v in local_vars.values():
-        if isinstance(v, list) and v and all(_scalar(x) for x in v):
-            if best is None or len(v) > len(best):
-                best = v
-    return list(best) if best is not None else fallback
-
-
-def _frame_of(local_vars, fallback_array):
-    array = _pick_array(local_vars, fallback_array)
-    n = len(array)
-    pointers, scalars = {}, {}
-    for name, v in local_vars.items():
-        if isinstance(v, list) or name.startswith("_"):
-            continue
-        if isinstance(v, bool):
-            scalars[name] = v
-        elif isinstance(v, int) and 0 <= v < n:
-            pointers[name] = v
-        elif _scalar(v):
-            scalars[name] = v
-    return {
-        "array": array,
-        "pointers": pointers,
-        "vars": scalars,
-        "highlight": sorted(set(pointers.values())),
-        "caption": "",
-    }
-
-
-def _caption(prev, cur):
-    """Mechanical, honest: name what actually changed between two frames."""
-    if prev is None:
-        return "Your run starts here."
-    moves = [f"{k}: {prev['pointers'][k]} to {v}"
-             for k, v in cur["pointers"].items()
-             if k in prev["pointers"] and prev["pointers"][k] != v]
-    new_ptr = [f"{k} starts at {v}" for k, v in cur["pointers"].items()
-               if k not in prev["pointers"]]
-    changed = [f"{k} = {v}" for k, v in cur["vars"].items()
-               if prev["vars"].get(k) != v]
-    parts = moves + new_ptr + changed
-    return "; ".join(parts) if parts else "The array changed."
-
+# The tracer itself lives in tracer.py, loaded from disk at startup and shared
+# with tools/record.py, so the learner's run and the authored walkthrough are
+# produced by exactly the same code.
 
 def _trace_run(source, func_name, args_json):
     args = json.loads(args_json)
@@ -113,57 +52,9 @@ def _trace_run(source, func_name, args_json):
     if not callable(fn):
         return json.dumps({
             "error": f"No function named {func_name} was defined.", "steps": []})
-
-    fallback = []
-    for a in args:
-        if isinstance(a, (list, str)):
-            fallback = _as_cells(a)
-            break
-
-    frames, budget, prev_key = [], [${TRACE_BUDGET}], [None]
-
-    def localtrace(frame, event, arg):
-        if event != "line":
-            return localtrace
-        budget[0] -= 1
-        if budget[0] < 0:
-            raise _Timeout()
-        if len(frames) >= _MAX_FRAMES:
-            return localtrace
-        try:
-            f = _frame_of(dict(frame.f_locals), fallback)
-        except Exception:
-            return localtrace
-        key = json.dumps([f["array"], f["pointers"], f["vars"]], sort_keys=True,
-                         default=str)
-        if key != prev_key[0]:
-            f["caption"] = _caption(frames[-1] if frames else None, f)
-            frames.append(f)
-            prev_key[0] = key
-        return localtrace
-
-    def globaltrace(frame, event, arg):
-        return localtrace if frame.f_code.co_name == func_name else None
-
-    error = None
-    try:
-        sys.settrace(globaltrace)
-        result = fn(*[_copy(a) for a in args])
-        sys.settrace(None)
-        try:
-            result = json.loads(json.dumps(result))
-        except TypeError:
-            result = str(result)
-    except _Timeout:
-        sys.settrace(None)
-        result, error = None, "timed out — check for a loop that never ends"
-    except Exception:
-        sys.settrace(None)
-        result, error = None, traceback.format_exc(limit=1).strip()
-
-    truncated = len(frames) >= _MAX_FRAMES
-    return json.dumps({"steps": frames, "result": result, "error": error,
-                       "truncated": truncated})
+    out = _tracer.trace_call(fn, [_copy(a) for a in args], func_name,
+                             budget=${TRACE_BUDGET})
+    return json.dumps(out)
 
 def _run_tests(source, func_name, tests_json):
     tests = json.loads(tests_json)

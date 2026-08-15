@@ -78,10 +78,23 @@ Rules:
 
 ## Authoring flow
 
-`tools/record.py` holds the reference solutions and a tiny recorder helper.
-Running it executes each solution against its example input, capturing a step
-each time the recorder is called, and writes `steps` into the problem JSON.
-The reference solutions live only in this file and are never served.
+Two routes, both driven by `tools/record.py`, which holds every reference
+solution and is never served.
+
+**Auto-traced (default).** `tracer.py` runs an ordinary, uninstrumented solution
+under `sys.settrace` and derives frames from its locals: the longest list of
+scalars is the array, ints indexing it are pointers, other scalars are the
+readout. Captions come out mechanical ("r: 3 to 2"); the author overrides the
+handful that sit at decisions, where the WHY is the teaching. This is the path a
+new problem takes.
+
+**Hand-written.** A `trace_<name>(rec)` function calling `rec.step(...)`. Still
+required for view-specific overlays the tracer cannot infer, such as the bars
+view's `water` and `region`, and used by the five original problems.
+
+`tracer.py` is shared: the browser loads the same file to animate the learner's
+own run, so a learner's trace and the walkthrough it is compared against are
+produced by identical code.
 
 ## The learner loop
 
@@ -117,13 +130,26 @@ valid index into that step's `array`; every `checkpoints[].afterStep` within `st
 `answer` present in its `options`; no fenced code or `def ` in
 any hint. Run it after any content edit.
 
+## Visualizing the learner's own run
+
+"Visualize my run" traces the learner's function on the first test input and
+animates it in the same view, with checkpoints off and the reference walkthrough
+untouched behind it. Crashes and timeouts still return the frames captured
+before they happened, so a bug can be watched up to the moment it bites.
+
+Known limits: captions are mechanical, and the tracer cannot infer `water` or
+`region`, so a learner's Trapping Rain Water run renders as bare columns.
+Divergence between the learner's run and the reference is not yet flagged.
+
 ## V1 content
 
-Two Pointers, five problems: Valid Palindrome, Two Sum II, 3Sum,
-Container With Most Water, Trapping Rain Water.
+Two Pointers, six problems: Valid Palindrome, Two Sum II, 3Sum, Container With
+Most Water, Trapping Rain Water, Move Zeroes.
 
-## Open scaling question (deferred)
+## Views
 
-Patterns needing a tree, grid, or graph visualizer require a second renderer
-behind the same `render(step)` interface. Deliberately out of scope until the
-array pattern is validated.
+`visualizer.js` dispatches over `views/*.js` by the problem's `view` key.
+`cells` (values matter) and `bars` (shape matters, with water and region
+overlays) exist. `grid`, `tree`, `graph` and `linked` slot in behind the same
+`render(svg, step)` interface plus a `views/manifest.json` entry, which the
+validator reads. Not built until a pattern needs one.

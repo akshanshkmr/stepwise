@@ -4,7 +4,7 @@ import sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 
-from record import SOLUTIONS, Recorder
+from record import AUTO, CAPTIONS, SOLUTIONS, Recorder, auto_trace
 from validate import validate_problem
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
@@ -40,8 +40,10 @@ def test_every_solution_produces_a_valid_trace():
             assert all(0 <= v < n for v in step["pointers"].values()), f"{pid} step {i} bad pointer"
 
 
-def test_every_step_carries_the_scalars_its_captions_discuss():
-    """Every trace shows a readout: pointers alone are not the story."""
+def test_every_hand_written_step_carries_the_scalars_its_captions_discuss():
+    """Hand-written traces show a readout: pointers alone are not the story.
+    Auto-traced problems are exempt — a solution whose only state is two
+    indices has nothing to put there, and inventing one would be a lie."""
     for pid, trace_fn in SOLUTIONS.items():
         rec = Recorder()
         trace_fn(rec)
@@ -49,8 +51,28 @@ def test_every_step_carries_the_scalars_its_captions_discuss():
             assert step["vars"], f"{pid} step {i} has an empty readout"
 
 
+def test_auto_traced_solutions_produce_valid_frames():
+    for pid, (fn, args) in AUTO.items():
+        steps = auto_trace(fn, args)
+        assert steps, f"{pid} produced no frames"
+        for i, step in enumerate(steps):
+            n = len(step["array"])
+            assert step["caption"], f"{pid} frame {i} has an empty caption"
+            assert all(0 <= v < n for v in step["pointers"].values()), \
+                f"{pid} frame {i} has a pointer outside the array"
+
+
+def test_caption_overrides_point_at_real_frames():
+    """An override index past the end of the trace would silently teach nothing."""
+    for pid, overrides in CAPTIONS.items():
+        fn, args = AUTO[pid]
+        count = len(auto_trace(fn, args))
+        for i in overrides:
+            assert 0 <= i < count, f"{pid} caption {i} is outside its {count} frames"
+
+
 def test_regenerated_problem_files_are_valid():
-    for pid in SOLUTIONS:
+    for pid in list(SOLUTIONS) + list(AUTO):
         path = ROOT / "problems" / f"{pid}.json"
         assert path.exists(), f"missing {path}"
         assert validate_problem(json.loads(path.read_text())) == []

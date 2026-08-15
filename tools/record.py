@@ -6,6 +6,25 @@ import pathlib
 import sys
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT))
+
+import tracer  # noqa: E402  — same tracer the browser uses on the learner's run
+
+
+def auto_trace(fn, args, func_name=None):
+    """Generate steps from an ordinary solution, no rec.step calls needed.
+
+    The captions come out mechanical ("r: 3 to 2"). That is the deal: this gets
+    a problem animating in minutes, and an author then rewrites the handful of
+    captions that sit at decision points, where the WHY is the teaching. Use
+    CAPTIONS below to override them by frame index.
+    """
+    out = tracer.trace_call(fn, args, func_name or fn.__name__)
+    if out["error"]:
+        raise RuntimeError(f"{fn.__name__} failed while tracing: {out['error']}")
+    if not out["steps"]:
+        raise RuntimeError(f"{fn.__name__} produced no frames — nothing changed to watch")
+    return out["steps"]
 
 
 class Recorder:
@@ -246,6 +265,43 @@ def trace_trapping_rain_water(rec):
              vars=scalars(), water=list(depths))
 
 
+# --- auto-traced problems -------------------------------------------------
+# No rec.step calls: an ordinary solution, traced automatically. This is the
+# path a new problem should take.
+
+def solve_move_zeroes(nums):
+    slot = 0
+    for scan in range(len(nums)):
+        if nums[scan] != 0:
+            nums[slot], nums[scan] = nums[scan], nums[slot]
+            slot += 1
+    return nums
+
+
+AUTO = {
+    "move-zeroes": (solve_move_zeroes, [[0, 1, 0, 3, 12]]),
+}
+
+# Only the frames where the WHY matters. Everything else keeps the tracer's
+# mechanical caption, which is accurate if bland.
+CAPTIONS = {
+    "move-zeroes": {
+        0: "Both markers will start at the front — this pair moves at different speeds rather than from opposite ends.",
+        1: "slot starts at 0: the first position that still needs filling.",
+        2: "scan starts at 0 too, and it is the one that will visit every element.",
+        3: "nums[0] was a zero, so nothing was placed. scan moves on alone and slot stays waiting.",
+        4: "nums[scan] is 1, a non-zero, so it swaps into the slot — and the zero that was there gets pushed out to where scan is.",
+        5: "Only now does slot advance: position 0 is settled, so the next non-zero belongs at 1.",
+        7: "Another zero at index 2, so scan passes over it and slot holds its place again.",
+        8: "3 is non-zero, so it swaps down into the waiting slot.",
+        11: "12 swaps into the last waiting slot, and the zeros have been pushed to the back without ever being moved deliberately.",
+        12: "Every element has been scanned. Everything left of slot is settled, and the zeros fell to the end on their own.",
+    },
+}
+
+# Checkpoints are authored by hand against the recorded trace, keyed by problem
+# id. afterStep indexes into the generated steps.
+
 SOLUTIONS = {
     "two-sum-ii": trace_two_sum_ii,
     "valid-palindrome": trace_valid_palindrome,
@@ -315,20 +371,54 @@ CHECKPOINTS = {
          "answer": "r, the shorter side",
          "why": "The side with the lower current bar is the one whose water level is already decided — the far side is guaranteed at least as tall, so it can't be the limiting wall."},
     ],
+    "move-zeroes": [
+        {"afterStep": 3,
+         "question": "scan just passed a zero and slot did not move. Why not?",
+         "options": [
+             "slot only advances once something has actually been placed there",
+             "slot advances every time scan does, just one step behind",
+             "slot is waiting for scan to reach the end of the array"],
+         "answer": "slot only advances once something has actually been placed there",
+         "why": "slot marks the first unfilled position. If it advanced past a zero, that zero would be treated as settled and would never reach the back."},
+        {"afterStep": 4,
+         "question": "A non-zero was just swapped into slot. What happens to slot now?",
+         "options": [
+             "it advances, because that position is now settled",
+             "it stays, because the swap may need to be repeated",
+             "it jumps to wherever scan is"],
+         "answer": "it advances, because that position is now settled",
+         "why": "The slot has been filled with the correct next value, so the boundary of the settled region moves forward by exactly one."},
+    ],
 }
 
 
 def main():
-    for pid, trace_fn in SOLUTIONS.items():
+    for pid in list(SOLUTIONS) + list(AUTO):
+        trace_fn = SOLUTIONS.get(pid)
         path = ROOT / "problems" / f"{pid}.json"
         problem = json.loads(path.read_text())
-        rec = Recorder()
-        trace_fn(rec)
-        problem["steps"] = rec.steps
+
+        if pid in AUTO:
+            # Auto-traced: an ordinary solution plus caption overrides.
+            fn, args = AUTO[pid]
+            steps = auto_trace(fn, args)
+            for i, text in CAPTIONS.get(pid, {}).items():
+                if not 0 <= i < len(steps):
+                    raise IndexError(
+                        f"{pid}: caption override {i} is outside the {len(steps)} "
+                        f"frames the tracer produced")
+                steps[i]["caption"] = text
+            written, kind = steps, f"auto ({len(CAPTIONS.get(pid, {}))} captions written)"
+        else:
+            rec = Recorder()
+            trace_fn(rec)
+            written, kind = rec.steps, "hand"
+
+        problem["steps"] = written
         problem["checkpoints"] = CHECKPOINTS.get(pid, [])
         path.write_text(json.dumps(problem, indent=2) + "\n")
-        print(f"{path.name}: wrote {len(rec.steps)} steps, "
-              f"{len(problem['checkpoints'])} checkpoints")
+        print(f"{path.name}: wrote {len(written)} steps, "
+              f"{len(problem['checkpoints'])} checkpoints [{kind}]")
     return 0
 
 
