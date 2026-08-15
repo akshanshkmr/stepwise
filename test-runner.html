@@ -1,0 +1,75 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>runner self-check</title>
+<pre id="out">loading pyodide…</pre>
+<script type="module">
+import { ready, run } from "./runner.js";
+
+const results = [];
+const check = async (name, fn) => {
+  try { await fn(); results.push("PASS " + name); }
+  catch (e) { results.push("FAIL " + name + " — " + e.message); }
+  document.getElementById("out").textContent = results.join("\n");
+};
+const assert = (cond, msg) => { if (!cond) throw new Error(msg); };
+
+const TESTS = [
+  { args: [[2, 7, 11, 15], 9], expect: [1, 2] },
+  { args: [[2, 3, 4], 6], expect: [1, 3] },
+];
+
+const CORRECT = `
+def two_sum(numbers, target):
+    l, r = 0, len(numbers) - 1
+    while l < r:
+        s = numbers[l] + numbers[r]
+        if s == target:
+            return [l + 1, r + 1]
+        if s > target:
+            r -= 1
+        else:
+            l += 1
+`;
+
+await ready((msg) => { document.getElementById("out").textContent = msg; });
+
+await check("correct solution passes every case", async () => {
+  const res = await run(CORRECT, "two_sum", TESTS);
+  assert(res.length === 2, "expected 2 results");
+  assert(res.every(r => r.pass), JSON.stringify(res));
+});
+
+await check("wrong answer is reported, not thrown", async () => {
+  const res = await run("def two_sum(numbers, target):\n    return [0, 0]\n", "two_sum", TESTS);
+  assert(res.every(r => !r.pass), "should have failed");
+  assert(JSON.stringify(res[0].actual) === "[0,0]", "actual not captured");
+  assert(res[0].error === null, "should not be an error, just wrong");
+});
+
+await check("exception in learner code becomes an error result", async () => {
+  const res = await run("def two_sum(numbers, target):\n    return 1 / 0\n", "two_sum", TESTS);
+  assert(!res[0].pass, "should not pass");
+  assert(res[0].error && res[0].error.includes("ZeroDivisionError"), "got " + res[0].error);
+});
+
+await check("missing function name gives a clear message", async () => {
+  const res = await run("x = 1\n", "two_sum", TESTS);
+  assert(res[0].error && res[0].error.includes("two_sum"), "got " + res[0].error);
+});
+
+await check("syntax error gives a clear message", async () => {
+  const res = await run("def two_sum(:\n", "two_sum", TESTS);
+  assert(res[0].error && res[0].error.includes("SyntaxError"), "got " + res[0].error);
+});
+
+await check("infinite loop times out instead of hanging", async () => {
+  const res = await run("def two_sum(numbers, target):\n    while True:\n        pass\n", "two_sum", TESTS);
+  assert(res[0].error && res[0].error.includes("timed out"), "got " + res[0].error);
+});
+
+await check("state does not leak between runs", async () => {
+  await run("def two_sum(numbers, target):\n    return [1, 2]\n", "two_sum", TESTS);
+  const res = await run("y = 2\n", "two_sum", TESTS);
+  assert(res[0].error && res[0].error.includes("two_sum"), "stale function survived: " + res[0].error);
+});
+</script>
