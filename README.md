@@ -23,8 +23,12 @@ so the URL bar can't reach `dev/` or `tools/`.
 
 ## Add a problem
 
-Write an ordinary solution — no instrumentation. `tracer.py` watches its locals
-and turns them into animation frames.
+```bash
+python3 tools/new_problem.py <id> --pattern "Stack" --difficulty Medium --view stack
+```
+
+`CLAUDE.md` is the full playbook — content rules, caption and checkpoint
+guidance, and the traps. The short version:
 
 1. In `tools/record.py`, add a plain `solve_<name>(...)` function and an `AUTO`
    entry giving it an example input.

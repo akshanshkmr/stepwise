@@ -6,7 +6,8 @@
         {
           "id": "move-zeroes",
           "title": "Move Zeroes",
-          "order": 1
+          "order": 1,
+          "difficulty": "Easy"
         }
       ]
     },
@@ -16,27 +17,32 @@
         {
           "id": "valid-palindrome",
           "title": "Valid Palindrome",
-          "order": 1
+          "order": 1,
+          "difficulty": "Easy"
         },
         {
           "id": "two-sum-ii",
           "title": "Two Sum II \u2014 Input Array Is Sorted",
-          "order": 2
+          "order": 2,
+          "difficulty": "Medium"
         },
         {
           "id": "3sum",
           "title": "3Sum",
-          "order": 3
+          "order": 3,
+          "difficulty": "Medium"
         },
         {
           "id": "container-with-most-water",
           "title": "Container With Most Water",
-          "order": 4
+          "order": 4,
+          "difficulty": "Medium"
         },
         {
           "id": "trapping-rain-water",
           "title": "Trapping Rain Water",
-          "order": 5
+          "order": 5,
+          "difficulty": "Hard"
         }
       ]
     },
@@ -46,7 +52,20 @@
     },
     {
       "name": "Stack",
-      "problems": []
+      "problems": [
+        {
+          "id": "valid-parentheses",
+          "title": "Valid Parentheses",
+          "order": 1,
+          "difficulty": "Easy"
+        },
+        {
+          "id": "daily-temperatures",
+          "title": "Daily Temperatures",
+          "order": 2,
+          "difficulty": "Medium"
+        }
+      ]
     },
     {
       "name": "Binary Search",

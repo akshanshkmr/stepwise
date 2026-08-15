@@ -15,6 +15,7 @@
   "signature": "def three_sum(nums):",
   "func": "three_sum",
   "pattern": "Two Pointers",
+  "difficulty": "Medium",
   "order": 3,
   "view": "cells",
   "steps": [

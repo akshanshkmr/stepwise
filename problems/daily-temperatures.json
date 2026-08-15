@@ -1,0 +1,515 @@
+{
+  "id": "daily-temperatures",
+  "title": "Daily Temperatures",
+  "statement": "Given an array `temperatures` of daily temperatures, return an array `answer` where `answer[i]` is the number of days you have to wait after day `i` to get a warmer temperature.\n\nIf no warmer day ever comes, `answer[i]` is `0`.",
+  "examples": [
+    {
+      "input": "temperatures = [73,74,75,71,69,72,76,73]",
+      "output": "[1,1,4,2,1,1,0,0]"
+    },
+    {
+      "input": "temperatures = [30,40,50,60]",
+      "output": "[1,1,1,0]"
+    }
+  ],
+  "signature": "def daily_temperatures(temperatures):",
+  "func": "daily_temperatures",
+  "pattern": "Stack",
+  "difficulty": "Medium",
+  "order": 2,
+  "view": "stack",
+  "steps": [
+    {
+      "array": [
+        73,
+        74,
+        75,
+        71,
+        69,
+        72,
+        76
+      ],
+      "pointers": {
+        "i": 0
+      },
+      "vars": {
+        "answer": "[0, 0, 0, 0, 0, 0, 0]"
+      },
+      "highlight": [
+        0
+      ],
+      "caption": "Keep the days still waiting for a warmer one.",
+      "stack": []
+    },
+    {
+      "array": [
+        73,
+        74,
+        75,
+        71,
+        69,
+        72,
+        76
+      ],
+      "pointers": {
+        "i": 0
+      },
+      "vars": {
+        "answer": "[0, 0, 0, 0, 0, 0, 0]"
+      },
+      "highlight": [
+        0
+      ],
+      "caption": "Nothing left on the stack is cooler than 73, so day 0 joins the queue of days still waiting.",
+      "stack": [
+        0
+      ]
+    },
+    {
+      "array": [
+        73,
+        74,
+        75,
+        71,
+        69,
+        72,
+        76
+      ],
+      "pointers": {
+        "i": 1,
+        "j": 0
+      },
+      "vars": {
+        "answer": "[1, 0, 0, 0, 0, 0, 0]"
+      },
+      "highlight": [
+        1,
+        0
+      ],
+      "caption": "Day 1 is 74, warmer than day 0's 73. That is the first warmer day for 0, so it waited 1 day(s) and stops waiting.",
+      "stack": []
+    },
+    {
+      "array": [
+        73,
+        74,
+        75,
+        71,
+        69,
+        72,
+        76
+      ],
+      "pointers": {
+        "i": 1
+      },
+      "vars": {
+        "answer": "[1, 0, 0, 0, 0, 0, 0]"
+      },
+      "highlight": [
+        1
+      ],
+      "caption": "Nothing left on the stack is cooler than 74, so day 1 joins the queue of days still waiting.",
+      "stack": [
+        1
+      ]
+    },
+    {
+      "array": [
+        73,
+        74,
+        75,
+        71,
+        69,
+        72,
+        76
+      ],
+      "pointers": {
+        "i": 2,
+        "j": 1
+      },
+      "vars": {
+        "answer": "[1, 1, 0, 0, 0, 0, 0]"
+      },
+      "highlight": [
+        2,
+        1
+      ],
+      "caption": "Day 2 is 75, warmer than day 1's 74. That is the first warmer day for 1, so it waited 1 day(s) and stops waiting.",
+      "stack": []
+    },
+    {
+      "array": [
+        73,
+        74,
+        75,
+        71,
+        69,
+        72,
+        76
+      ],
+      "pointers": {
+        "i": 2
+      },
+      "vars": {
+        "answer": "[1, 1, 0, 0, 0, 0, 0]"
+      },
+      "highlight": [
+        2
+      ],
+      "caption": "Nothing left on the stack is cooler than 75, so day 2 joins the queue of days still waiting.",
+      "stack": [
+        2
+      ]
+    },
+    {
+      "array": [
+        73,
+        74,
+        75,
+        71,
+        69,
+        72,
+        76
+      ],
+      "pointers": {
+        "i": 3
+      },
+      "vars": {
+        "answer": "[1, 1, 0, 0, 0, 0, 0]"
+      },
+      "highlight": [
+        3
+      ],
+      "caption": "Nothing left on the stack is cooler than 71, so day 3 joins the queue of days still waiting.",
+      "stack": [
+        2,
+        3
+      ]
+    },
+    {
+      "array": [
+        73,
+        74,
+        75,
+        71,
+        69,
+        72,
+        76
+      ],
+      "pointers": {
+        "i": 4
+      },
+      "vars": {
+        "answer": "[1, 1, 0, 0, 0, 0, 0]"
+      },
+      "highlight": [
+        4
+      ],
+      "caption": "Nothing left on the stack is cooler than 69, so day 4 joins the queue of days still waiting.",
+      "stack": [
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "array": [
+        73,
+        74,
+        75,
+        71,
+        69,
+        72,
+        76
+      ],
+      "pointers": {
+        "i": 5,
+        "j": 4
+      },
+      "vars": {
+        "answer": "[1, 1, 0, 0, 1, 0, 0]"
+      },
+      "highlight": [
+        5,
+        4
+      ],
+      "caption": "Day 5 is 72, warmer than day 4's 69. That is the first warmer day for 4, so it waited 1 day(s) and stops waiting.",
+      "stack": [
+        2,
+        3
+      ]
+    },
+    {
+      "array": [
+        73,
+        74,
+        75,
+        71,
+        69,
+        72,
+        76
+      ],
+      "pointers": {
+        "i": 5,
+        "j": 3
+      },
+      "vars": {
+        "answer": "[1, 1, 0, 2, 1, 0, 0]"
+      },
+      "highlight": [
+        5,
+        3
+      ],
+      "caption": "Day 5 is 72, warmer than day 3's 71. That is the first warmer day for 3, so it waited 2 day(s) and stops waiting.",
+      "stack": [
+        2
+      ]
+    },
+    {
+      "array": [
+        73,
+        74,
+        75,
+        71,
+        69,
+        72,
+        76
+      ],
+      "pointers": {
+        "i": 5
+      },
+      "vars": {
+        "answer": "[1, 1, 0, 2, 1, 0, 0]"
+      },
+      "highlight": [
+        5
+      ],
+      "caption": "Nothing left on the stack is cooler than 72, so day 5 joins the queue of days still waiting.",
+      "stack": [
+        2,
+        5
+      ]
+    },
+    {
+      "array": [
+        73,
+        74,
+        75,
+        71,
+        69,
+        72,
+        76
+      ],
+      "pointers": {
+        "i": 6,
+        "j": 5
+      },
+      "vars": {
+        "answer": "[1, 1, 0, 2, 1, 1, 0]"
+      },
+      "highlight": [
+        6,
+        5
+      ],
+      "caption": "Day 6 is 76, warmer than day 5's 72. That is the first warmer day for 5, so it waited 1 day(s) and stops waiting.",
+      "stack": [
+        2
+      ]
+    },
+    {
+      "array": [
+        73,
+        74,
+        75,
+        71,
+        69,
+        72,
+        76
+      ],
+      "pointers": {
+        "i": 6,
+        "j": 2
+      },
+      "vars": {
+        "answer": "[1, 1, 4, 2, 1, 1, 0]"
+      },
+      "highlight": [
+        6,
+        2
+      ],
+      "caption": "Day 6 is 76, warmer than day 2's 75. That is the first warmer day for 2, so it waited 4 day(s) and stops waiting.",
+      "stack": []
+    },
+    {
+      "array": [
+        73,
+        74,
+        75,
+        71,
+        69,
+        72,
+        76
+      ],
+      "pointers": {
+        "i": 6
+      },
+      "vars": {
+        "answer": "[1, 1, 4, 2, 1, 1, 0]"
+      },
+      "highlight": [
+        6
+      ],
+      "caption": "Nothing left on the stack is cooler than 76, so day 6 joins the queue of days still waiting.",
+      "stack": [
+        6
+      ]
+    },
+    {
+      "array": [
+        73,
+        74,
+        75,
+        71,
+        69,
+        72,
+        76
+      ],
+      "pointers": {
+        "i": 6
+      },
+      "vars": {
+        "answer": "[1, 1, 4, 2, 1, 1, 0]"
+      },
+      "highlight": [
+        6
+      ],
+      "caption": "Whatever is still waiting never warmed up, so those stay 0. Answer: [1, 1, 4, 2, 1, 1, 0].",
+      "stack": [
+        6
+      ]
+    }
+  ],
+  "checkpoints": [
+    {
+      "afterStep": 7,
+      "question": "Days 2, 3 and 4 are all waiting. When a warmer day finally arrives, which one does it answer first?",
+      "options": [
+        "day 4, the most recent",
+        "day 2, which has been waiting longest",
+        "all three at once, since one warm day settles them together"
+      ],
+      "answer": "day 4, the most recent",
+      "why": "The waiting days get cooler as you go right, so the newest is the easiest to beat. A day warm enough for an older one must pass the newer ones first."
+    },
+    {
+      "afterStep": 11,
+      "question": "Day 6 is 76 and has just settled day 5. Does it stop there?",
+      "options": [
+        "no \u2014 it keeps settling while the top is still cooler",
+        "yes \u2014 each day answers at most one waiting day",
+        "yes \u2014 the rest have to wait for a day warmer than 76"
+      ],
+      "answer": "no \u2014 it keeps settling while the top is still cooler",
+      "why": "One warm day can end several waits at once. Stopping after one is the common bug: day 2 has been waiting since the start and 76 answers it too."
+    }
+  ],
+  "hints": [
+    "Comparing every day against every later day works, but re-reads the same stretch over and over. What do you already know about the days you have passed and not yet answered?",
+    "A day is still waiting only until something warmer shows up. When today is warmer than a waiting day, today is that day's answer \u2014 and today can settle several waiting days at once, newest first.",
+    "Walk forward keeping the indices of days whose answer is still unknown. Before adding today, keep taking the most recent waiting day for as long as today is warmer than it, recording the gap between them each time. Then today joins the waiting list. Anything still unanswered at the end never warmed up."
+  ],
+  "tests": [
+    {
+      "args": [
+        [
+          73,
+          74,
+          75,
+          71,
+          69,
+          72,
+          76,
+          73
+        ]
+      ],
+      "expect": [
+        1,
+        1,
+        4,
+        2,
+        1,
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "args": [
+        [
+          30,
+          40,
+          50,
+          60
+        ]
+      ],
+      "expect": [
+        1,
+        1,
+        1,
+        0
+      ]
+    },
+    {
+      "args": [
+        [
+          30,
+          60,
+          90
+        ]
+      ],
+      "expect": [
+        1,
+        1,
+        0
+      ]
+    },
+    {
+      "args": [
+        [
+          90,
+          80,
+          70
+        ]
+      ],
+      "expect": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "args": [
+        [
+          50
+        ]
+      ],
+      "expect": [
+        0
+      ]
+    },
+    {
+      "args": [
+        [
+          70,
+          70,
+          71
+        ]
+      ],
+      "expect": [
+        2,
+        1,
+        0
+      ]
+    }
+  ]
+}

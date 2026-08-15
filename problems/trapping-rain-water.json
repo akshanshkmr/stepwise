@@ -15,6 +15,7 @@
   "signature": "def trap(height):",
   "func": "trap",
   "pattern": "Two Pointers",
+  "difficulty": "Hard",
   "order": 5,
   "view": "bars",
   "steps": [

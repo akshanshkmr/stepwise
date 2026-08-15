@@ -1,11 +1,12 @@
 import { el } from "./views/svg.js";
 import { render as cells } from "./views/cells.js";
 import { render as bars } from "./views/bars.js";
+import { render as stack } from "./views/stack.js";
 
 // The view registry. A new shape of problem (grid, tree, graph, linked list)
 // is a new file here plus an entry in views/manifest.json — no change to this
 // dispatcher, to app.js, or to the validator.
-const VIEWS = { cells, bars };
+const VIEWS = { cells, bars, stack };
 
 export const viewNames = () => Object.keys(VIEWS);
 

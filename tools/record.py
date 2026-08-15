@@ -265,6 +265,74 @@ def trace_trapping_rain_water(rec):
              vars=scalars(), water=list(depths))
 
 
+def _walk_parens(rec, text, opening):
+    arr = list(text)
+    pairs = {")": "(", "]": "[", "}": "{"}
+    stack = []
+    rec.step(arr, {"i": 0}, opening, [0],
+             vars={"verdict": "unknown"}, stack=list(stack))
+    for i, ch in enumerate(arr):
+        if ch not in pairs:
+            stack.append(ch)
+            rec.step(arr, {"i": i}, f"'{ch}' opens, so remember it — it is now the "
+                     f"one that must be closed next.", [i],
+                     vars={"verdict": "unknown"}, stack=list(stack))
+            continue
+        if not stack:
+            rec.step(arr, {"i": i}, f"'{ch}' closes, but nothing is open to close. "
+                     f"That settles it.", [i],
+                     vars={"verdict": "false"}, stack=list(stack))
+            return
+        want = pairs[ch]
+        got = stack[-1]
+        if got != want:
+            rec.step(arr, {"i": i}, f"'{ch}' needs '{want}' on top, but the top is "
+                     f"'{got}'. The most recent opener is the only one it may close.",
+                     [i], vars={"verdict": "false"}, stack=list(stack))
+            return
+        stack.pop()
+        rec.step(arr, {"i": i}, f"'{ch}' matches the '{got}' on top, so that pair is "
+                 f"settled and comes off.", [i],
+                 vars={"verdict": "unknown"}, stack=list(stack))
+    verdict = "true" if not stack else "false"
+    rec.step(arr, {"i": len(arr) - 1},
+             "Every character read and nothing left open — balanced."
+             if not stack else
+             f"End of the string with {len(stack)} opener(s) never closed.",
+             [len(arr) - 1], vars={"verdict": verdict}, stack=list(stack))
+
+
+def trace_valid_parentheses(rec):
+    _walk_parens(rec, "({[]})", "Read left to right, remembering every opener.")
+    _walk_parens(rec, "([)]", 'New string: "([)]" — the counts match, so only order can betray it.')
+
+
+def trace_daily_temperatures(rec):
+    temps = [73, 74, 75, 71, 69, 72, 76]
+    answer = [0] * len(temps)
+    stack = []          # indices whose warmer day is still unknown
+    rec.step(temps, {"i": 0}, "Keep the days still waiting for a warmer one.", [0],
+             vars={"answer": str(answer)}, stack=list(stack))
+    for i, t in enumerate(temps):
+        while stack and temps[stack[-1]] < t:
+            j = stack.pop()
+            answer[j] = i - j
+            rec.step(temps, {"i": i, "j": j},
+                     f"Day {i} is {t}, warmer than day {j}'s {temps[j]}. That is the "
+                     f"first warmer day for {j}, so it waited {i - j} day(s) and "
+                     f"stops waiting.",
+                     [i, j], vars={"answer": str(answer)}, stack=list(stack))
+        stack.append(i)
+        rec.step(temps, {"i": i},
+                 f"Nothing left on the stack is cooler than {t}, so day {i} joins the "
+                 f"queue of days still waiting.",
+                 [i], vars={"answer": str(answer)}, stack=list(stack))
+    rec.step(temps, {"i": len(temps) - 1},
+             f"Whatever is still waiting never warmed up, so those stay 0. Answer: {answer}.",
+             [len(temps) - 1], vars={"answer": str(answer)}, stack=list(stack))
+
+
+
 # --- auto-traced problems -------------------------------------------------
 # No rec.step calls: an ordinary solution, traced automatically. This is the
 # path a new problem should take.
@@ -308,11 +376,49 @@ SOLUTIONS = {
     "container-with-most-water": trace_container_with_most_water,
     "3sum": trace_three_sum,
     "trapping-rain-water": trace_trapping_rain_water,
+    "valid-parentheses": trace_valid_parentheses,
+    "daily-temperatures": trace_daily_temperatures,
 }
 
 # Checkpoints are authored by hand against the recorded trace, keyed by problem id.
 # afterStep indexes into the generated steps.
 CHECKPOINTS = {
+    "valid-parentheses": [
+        {"afterStep": 3,
+         "question": "Three openers are being held and the next character is ']'. Which one is it allowed to close?",
+         "options": [
+             "the most recent opener, '['",
+             "the first opener, '(', since it opened the whole string",
+             "any '[' still being held, wherever it is"],
+         "answer": "the most recent opener, '['",
+         "why": "Brackets nest, so a closer always answers the innermost thing still open. That is exactly what 'most recent' means, and it is why a stack fits."},
+        {"afterStep": 10,
+         "question": "This string has two openers and two closers, and the next character is ')'. Is it still valid?",
+         "options": [
+             "no — the top is '[', so ')' arrives out of order",
+             "yes — the counts match, so every bracket has a partner",
+             "not yet decidable — the last character decides it"],
+         "answer": "no — the top is '[', so ')' arrives out of order",
+         "why": "Counting is blind to order. '[' opened after '(' and is still unclosed, so nothing but ']' may come next. This is the case that separates counting from a stack."},
+    ],
+    "daily-temperatures": [
+        {"afterStep": 7,
+         "question": "Days 2, 3 and 4 are all waiting. When a warmer day finally arrives, which one does it answer first?",
+         "options": [
+             "day 4, the most recent",
+             "day 2, which has been waiting longest",
+             "all three at once, since one warm day settles them together"],
+         "answer": "day 4, the most recent",
+         "why": "The waiting days get cooler as you go right, so the newest is the easiest to beat. A day warm enough for an older one must pass the newer ones first."},
+        {"afterStep": 11,
+         "question": "Day 6 is 76 and has just settled day 5. Does it stop there?",
+         "options": [
+             "no — it keeps settling while the top is still cooler",
+             "yes — each day answers at most one waiting day",
+             "yes — the rest have to wait for a day warmer than 76"],
+         "answer": "no — it keeps settling while the top is still cooler",
+         "why": "One warm day can end several waits at once. Stopping after one is the common bug: day 2 has been waiting since the start and 76 answers it too."},
+    ],
     "two-sum-ii": [
         {"afterStep": 1, "question": "The sum is 17 and the target is 9. Which pointer should move?",
          "options": ["l, rightward", "r, leftward"], "answer": "r, leftward",
@@ -436,7 +542,8 @@ def write_index():
             continue
         p = json.loads(path.read_text())
         by_pattern[p["pattern"]].append(
-            {"id": p["id"], "title": p["title"], "order": p["order"]})
+            {"id": p["id"], "title": p["title"], "order": p["order"],
+             "difficulty": p["difficulty"]})
     for problems in by_pattern.values():
         problems.sort(key=lambda x: x["order"])
 

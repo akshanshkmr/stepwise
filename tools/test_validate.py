@@ -10,6 +10,7 @@ GOOD = {
     "signature": "def two_sum(numbers, target):",
     "func": "two_sum",
     "pattern": "Two Pointers",
+    "difficulty": "Medium",
     "order": 1,
     "view": "cells",
     "steps": [
@@ -61,7 +62,14 @@ def test_empty_tests_reported():
     assert any("tests" in e for e in validate_problem(p))
 
 
-@pytest.mark.parametrize("bad", ["use `for i in range(n)`", "```python\nx=1\n```", "def two_sum(a, b):"])
+@pytest.mark.parametrize("bad", [
+    "use `for i in range(n)`",
+    "```python\nx=1\n```",
+    "def two_sum(a, b):",
+    "compare numbers[l] with the target",
+    "return [l + 1, r + 1] once they match",
+    "set r -= 1 to shrink the window",
+])
 def test_code_in_hint_reported(bad):
     p = copy.deepcopy(GOOD)
     p["hints"] = [bad]
@@ -134,3 +142,21 @@ def test_unknown_pattern_reported():
     p = copy.deepcopy(GOOD)
     p["pattern"] = "Vibes"
     assert any("unknown pattern" in e for e in validate_problem(p))
+
+
+@pytest.mark.parametrize("fine", [
+    "Keep taking the most recent waiting day for as long as today is warmer.",
+    "Every partner for it is at least as big as the one you just tried.",
+    "Return the two indices, not the values.",
+    "Move exactly one marker inward each round while the markers have not met.",
+])
+def test_prose_that_merely_uses_code_words_is_allowed(fine):
+    p = copy.deepcopy(GOOD)
+    p["hints"] = [fine]
+    assert validate_problem(p) == [], f"rejected legitimate prose: {fine}"
+
+
+def test_unknown_difficulty_reported():
+    p = copy.deepcopy(GOOD)
+    p["difficulty"] = "Spicy"
+    assert any("difficulty" in e for e in validate_problem(p))

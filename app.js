@@ -103,6 +103,8 @@ async function loadProblem(id) {
   mine = null;
   load();
   $("title").textContent = problem.title;
+  $("difficulty").textContent = problem.difficulty;
+  $("difficulty").className = "diff-badge diff-" + problem.difficulty.toLowerCase();
   $("statement").innerHTML = problem.statement
     .split("\n\n").map(p => `<p>${inline(p)}</p>`).join("");
   $("examples").innerHTML = problem.examples
@@ -447,7 +449,7 @@ async function buildSidebar() {
     details.appendChild(summary);
 
     const ul = document.createElement("ul");
-    for (const { id, title } of problems) {
+    for (const { id, title, difficulty } of problems) {
       ids.push(id);
       const li = document.createElement("li");
       const b = document.createElement("button");
@@ -456,6 +458,11 @@ async function buildSidebar() {
       b.innerHTML = '<span class="dot"></span>';
       // The sidebar shows the short name; the full title heads the problem.
       b.append(title.split("—")[0].trim());
+      const tag = document.createElement("span");
+      tag.className = "diff diff-" + difficulty.toLowerCase();
+      tag.textContent = difficulty[0];
+      tag.title = difficulty;
+      b.appendChild(tag);
       if (progressOf(id).solved) b.classList.add("solved");
       b.dataset.pattern = name;
       b.onclick = () => select(id);

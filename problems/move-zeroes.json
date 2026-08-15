@@ -15,6 +15,7 @@
   "signature": "def move_zeroes(nums):",
   "func": "move_zeroes",
   "pattern": "Arrays & Hashing",
+  "difficulty": "Easy",
   "order": 1,
   "view": "cells",
   "steps": [

@@ -172,10 +172,28 @@ select, button, textarea, input { font: inherit; color: inherit; }
 }
 #problem-list button[aria-current="true"] .dot { background: var(--accent); }
 
+/* Difficulty rides as a single letter in the list and a word on the problem,
+   coloured the way every practice site colours it — the convention is worth
+   more here than originality. */
+.diff {
+  flex: 0 0 auto; margin-left: auto;
+  font-size: .68rem; font-weight: 600;
+}
+.diff-easy   { color: var(--success); }
+.diff-medium { color: var(--warn); }
+.diff-hard   { color: var(--danger); }
+
+.diff-badge {
+  flex: 0 0 auto;
+  font-size: .72rem; font-weight: 600;
+  padding: .12rem .5rem; border-radius: var(--r-full);
+  background: var(--surface); border: 1px solid var(--border);
+}
+
 /* Solved is a quiet fact, not a trophy: a tick and a green dot, nothing more. */
 #problem-list button.solved .dot { background: var(--success); }
 #problem-list button.solved::after {
-  content: "✓"; margin-left: auto;
+  content: "✓";
   color: var(--success); font-size: .78rem; line-height: 1;
 }
 
@@ -303,6 +321,14 @@ button:disabled { opacity: .4; cursor: not-allowed; }
 .water { fill: var(--water); fill-opacity: .85; }
 .region { fill: var(--water); fill-opacity: .2; }
 .baseline { stroke: var(--surface-3); stroke-width: 1.5; }
+
+/* stack view */
+.stack-item rect { fill: var(--surface); stroke: var(--surface-3); stroke-width: 1.5; }
+.stack-item text { fill: var(--muted); font: 600 18px var(--sans); }
+.stack-item.top rect { stroke: var(--accent); stroke-width: 2; }
+.stack-item.top text { fill: var(--text); }
+.stack-top { fill: var(--accent); font: 600 12px var(--sans); }
+.stack-label { fill: var(--faint); font: 12px var(--mono); }
 
 #caption { margin: .9rem 0 0; max-width: 68ch; color: var(--text); }
 

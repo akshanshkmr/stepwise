@@ -1,0 +1,366 @@
+{
+  "id": "valid-parentheses",
+  "title": "Valid Parentheses",
+  "statement": "Given a string `s` containing only the characters `(`, `)`, `{`, `}`, `[` and `]`, determine whether the input is valid.\n\nThe string is valid when every bracket is closed by the **same type** of bracket, brackets close in the **correct order**, and every closing bracket has a matching opener.\n\nAn empty string is valid.",
+  "examples": [
+    {
+      "input": "s = \"({[]})\"",
+      "output": "true"
+    },
+    {
+      "input": "s = \"([)]\"",
+      "output": "false"
+    },
+    {
+      "input": "s = \"(]\"",
+      "output": "false"
+    }
+  ],
+  "signature": "def is_valid(s):",
+  "func": "is_valid",
+  "pattern": "Stack",
+  "difficulty": "Easy",
+  "order": 1,
+  "view": "stack",
+  "steps": [
+    {
+      "array": [
+        "(",
+        "{",
+        "[",
+        "]",
+        "}",
+        ")"
+      ],
+      "pointers": {
+        "i": 0
+      },
+      "vars": {
+        "verdict": "unknown"
+      },
+      "highlight": [
+        0
+      ],
+      "caption": "Read left to right, remembering every opener.",
+      "stack": []
+    },
+    {
+      "array": [
+        "(",
+        "{",
+        "[",
+        "]",
+        "}",
+        ")"
+      ],
+      "pointers": {
+        "i": 0
+      },
+      "vars": {
+        "verdict": "unknown"
+      },
+      "highlight": [
+        0
+      ],
+      "caption": "'(' opens, so remember it \u2014 it is now the one that must be closed next.",
+      "stack": [
+        "("
+      ]
+    },
+    {
+      "array": [
+        "(",
+        "{",
+        "[",
+        "]",
+        "}",
+        ")"
+      ],
+      "pointers": {
+        "i": 1
+      },
+      "vars": {
+        "verdict": "unknown"
+      },
+      "highlight": [
+        1
+      ],
+      "caption": "'{' opens, so remember it \u2014 it is now the one that must be closed next.",
+      "stack": [
+        "(",
+        "{"
+      ]
+    },
+    {
+      "array": [
+        "(",
+        "{",
+        "[",
+        "]",
+        "}",
+        ")"
+      ],
+      "pointers": {
+        "i": 2
+      },
+      "vars": {
+        "verdict": "unknown"
+      },
+      "highlight": [
+        2
+      ],
+      "caption": "'[' opens, so remember it \u2014 it is now the one that must be closed next.",
+      "stack": [
+        "(",
+        "{",
+        "["
+      ]
+    },
+    {
+      "array": [
+        "(",
+        "{",
+        "[",
+        "]",
+        "}",
+        ")"
+      ],
+      "pointers": {
+        "i": 3
+      },
+      "vars": {
+        "verdict": "unknown"
+      },
+      "highlight": [
+        3
+      ],
+      "caption": "']' matches the '[' on top, so that pair is settled and comes off.",
+      "stack": [
+        "(",
+        "{"
+      ]
+    },
+    {
+      "array": [
+        "(",
+        "{",
+        "[",
+        "]",
+        "}",
+        ")"
+      ],
+      "pointers": {
+        "i": 4
+      },
+      "vars": {
+        "verdict": "unknown"
+      },
+      "highlight": [
+        4
+      ],
+      "caption": "'}' matches the '{' on top, so that pair is settled and comes off.",
+      "stack": [
+        "("
+      ]
+    },
+    {
+      "array": [
+        "(",
+        "{",
+        "[",
+        "]",
+        "}",
+        ")"
+      ],
+      "pointers": {
+        "i": 5
+      },
+      "vars": {
+        "verdict": "unknown"
+      },
+      "highlight": [
+        5
+      ],
+      "caption": "')' matches the '(' on top, so that pair is settled and comes off.",
+      "stack": []
+    },
+    {
+      "array": [
+        "(",
+        "{",
+        "[",
+        "]",
+        "}",
+        ")"
+      ],
+      "pointers": {
+        "i": 5
+      },
+      "vars": {
+        "verdict": "true"
+      },
+      "highlight": [
+        5
+      ],
+      "caption": "Every character read and nothing left open \u2014 balanced.",
+      "stack": []
+    },
+    {
+      "array": [
+        "(",
+        "[",
+        ")",
+        "]"
+      ],
+      "pointers": {
+        "i": 0
+      },
+      "vars": {
+        "verdict": "unknown"
+      },
+      "highlight": [
+        0
+      ],
+      "caption": "New string: \"([)]\" \u2014 the counts match, so only order can betray it.",
+      "stack": []
+    },
+    {
+      "array": [
+        "(",
+        "[",
+        ")",
+        "]"
+      ],
+      "pointers": {
+        "i": 0
+      },
+      "vars": {
+        "verdict": "unknown"
+      },
+      "highlight": [
+        0
+      ],
+      "caption": "'(' opens, so remember it \u2014 it is now the one that must be closed next.",
+      "stack": [
+        "("
+      ]
+    },
+    {
+      "array": [
+        "(",
+        "[",
+        ")",
+        "]"
+      ],
+      "pointers": {
+        "i": 1
+      },
+      "vars": {
+        "verdict": "unknown"
+      },
+      "highlight": [
+        1
+      ],
+      "caption": "'[' opens, so remember it \u2014 it is now the one that must be closed next.",
+      "stack": [
+        "(",
+        "["
+      ]
+    },
+    {
+      "array": [
+        "(",
+        "[",
+        ")",
+        "]"
+      ],
+      "pointers": {
+        "i": 2
+      },
+      "vars": {
+        "verdict": "false"
+      },
+      "highlight": [
+        2
+      ],
+      "caption": "')' needs '(' on top, but the top is '['. The most recent opener is the only one it may close.",
+      "stack": [
+        "(",
+        "["
+      ]
+    }
+  ],
+  "checkpoints": [
+    {
+      "afterStep": 3,
+      "question": "Three openers are being held and the next character is ']'. Which one is it allowed to close?",
+      "options": [
+        "the most recent opener, '['",
+        "the first opener, '(', since it opened the whole string",
+        "any '[' still being held, wherever it is"
+      ],
+      "answer": "the most recent opener, '['",
+      "why": "Brackets nest, so a closer always answers the innermost thing still open. That is exactly what 'most recent' means, and it is why a stack fits."
+    },
+    {
+      "afterStep": 10,
+      "question": "This string has two openers and two closers, and the next character is ')'. Is it still valid?",
+      "options": [
+        "no \u2014 the top is '[', so ')' arrives out of order",
+        "yes \u2014 the counts match, so every bracket has a partner",
+        "not yet decidable \u2014 the last character decides it"
+      ],
+      "answer": "no \u2014 the top is '[', so ')' arrives out of order",
+      "why": "Counting is blind to order. '[' opened after '(' and is still unclosed, so nothing but ']' may come next. This is the case that separates counting from a stack."
+    }
+  ],
+  "hints": [
+    "Counting brackets is not enough. What makes the string on the right wrong when both have two openers and two closers?",
+    "When a closing bracket arrives, only one opener is allowed to answer it: the most recent one that is still unclosed. Everything older has to wait its turn.",
+    "Read left to right. Remember each opener in the order you meet them, and when a closer arrives, check it against the most recently remembered opener \u2014 if it matches, that pair is settled and both are forgotten. The string is valid when nothing is left waiting at the end."
+  ],
+  "tests": [
+    {
+      "args": [
+        "({[]})"
+      ],
+      "expect": true
+    },
+    {
+      "args": [
+        "([)]"
+      ],
+      "expect": false
+    },
+    {
+      "args": [
+        "(]"
+      ],
+      "expect": false
+    },
+    {
+      "args": [
+        ""
+      ],
+      "expect": true
+    },
+    {
+      "args": [
+        "]"
+      ],
+      "expect": false
+    },
+    {
+      "args": [
+        "((("
+      ],
+      "expect": false
+    },
+    {
+      "args": [
+        "()[]{}"
+      ],
+      "expect": true
+    }
+  ]
+}

@@ -1,14 +1,17 @@
 """Validate every problems/*.json against the CodeTeach content contract."""
 import json
 import pathlib
+import re
 import sys
 
 REQUIRED = ["id", "title", "statement", "examples", "signature", "func",
-            "pattern", "order", "view", "steps", "checkpoints", "hints", "tests"]
+            "pattern", "difficulty", "order", "view", "steps", "checkpoints", "hints", "tests"]
 
 # The curriculum, shared with the sidebar and the recorder.
 PATTERNS = set(json.loads((pathlib.Path(__file__).resolve().parent.parent
                           / "patterns.json").read_text())["order"])
+
+DIFFICULTIES = ("Easy", "Medium", "Hard")
 
 # The view contract is data, shared with visualizer.js. Adding a view means
 # adding views/<name>.js and a manifest entry — this validator needs no edit.
@@ -16,9 +19,20 @@ MANIFEST = json.loads((pathlib.Path(__file__).resolve().parent.parent
                        / "views" / "manifest.json").read_text())
 VIEWS = {k: v for k, v in MANIFEST.items() if not k.startswith("_")}
 
-# ponytail: substring scan, not a parser. Hints are short prose; if this ever
-# false-positives, tighten the tokens rather than reaching for an AST.
-CODE_TOKENS = ["```", "def ", "for ", "while ", "return ", "()"]
+# ponytail: shaped patterns, not a parser. A plain substring scan rejected
+# ordinary prose twice ("every partner for it", "for as long as"), so each
+# pattern now requires the surrounding punctuation that makes it code rather
+# than the English word. Tighten these further before reaching for an AST.
+CODE_PATTERNS = [
+    (r"```", "a code fence"),
+    (r"\bdef\s+\w+\s*\(", "a function definition"),
+    (r"\bfor\s+\w+\s+in\b", "a for loop"),
+    (r"\bwhile\s+\w+\s*[<>=!]", "a while condition"),
+    (r"\breturn\s+[\[\({\d]", "a return statement"),
+    (r"\w\s*[-+*/]=\s*\w", "an assignment"),
+    (r"\w+\[[^\]]*\]", "an index expression"),
+    (r"\w\(\)", "a call"),
+]
 
 
 def validate_problem(p):
@@ -37,6 +51,10 @@ def validate_problem(p):
         errors.append("hints must not be empty")
     if not p["checkpoints"]:
         errors.append("checkpoints must not be empty")
+
+    if p["difficulty"] not in DIFFICULTIES:
+        errors.append(
+            f"difficulty {p['difficulty']!r} must be one of {', '.join(DIFFICULTIES)}")
 
     if p["pattern"] not in PATTERNS:
         errors.append(f"unknown pattern {p['pattern']!r}; add it to patterns.json")
@@ -90,9 +108,9 @@ def validate_problem(p):
                 errors.append(f"checkpoints[{i}] answer {cp['answer']!r} not in options")
 
     for i, hint in enumerate(p["hints"]):
-        for token in CODE_TOKENS:
-            if token in hint:
-                errors.append(f"hint[{i}] looks like code (contains {token!r}); hints must be prose")
+        for pattern, what in CODE_PATTERNS:
+            if re.search(pattern, hint):
+                errors.append(f"hint[{i}] looks like code ({what}); hints must be prose")
                 break
 
     for i, t in enumerate(p["tests"]):
