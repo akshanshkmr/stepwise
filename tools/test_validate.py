@@ -9,6 +9,7 @@ GOOD = {
     "examples": [{"input": "numbers = [2,7,11,15], target = 9", "output": "[1,2]"}],
     "signature": "def two_sum(numbers, target):",
     "func": "two_sum",
+    "view": "cells",
     "steps": [
         {"array": [2, 7, 11, 15], "pointers": {"l": 0, "r": 3}, "vars": {"sum": 17},
          "highlight": [0, 3], "caption": "start"},
@@ -88,3 +89,40 @@ def test_empty_checkpoints_reported():
     p = copy.deepcopy(GOOD)
     p["checkpoints"] = []
     assert any("checkpoints" in e for e in validate_problem(p))
+
+
+# --- view registry -------------------------------------------------------
+
+def test_unknown_view_reported():
+    p = copy.deepcopy(GOOD)
+    p["view"] = "hologram"
+    assert any("unknown view" in e for e in validate_problem(p))
+
+
+def test_bars_view_accepts_water_and_region():
+    p = copy.deepcopy(GOOD)
+    p["view"] = "bars"
+    for step in p["steps"]:
+        step["water"] = [0] * len(step["array"])
+        step["region"] = {"from": 0, "to": 3, "level": 2}
+    assert validate_problem(p) == []
+
+
+def test_cells_view_rejects_water_it_does_not_declare():
+    p = copy.deepcopy(GOOD)
+    p["steps"][0]["water"] = [0, 0, 0, 0]
+    assert any("does not" in e for e in validate_problem(p))
+
+
+def test_water_length_must_match_array():
+    p = copy.deepcopy(GOOD)
+    p["view"] = "bars"
+    p["steps"][0]["water"] = [0, 0]
+    assert any("water has 2 entries" in e for e in validate_problem(p))
+
+
+def test_region_edge_outside_array_reported():
+    p = copy.deepcopy(GOOD)
+    p["view"] = "bars"
+    p["steps"][0]["region"] = {"from": 0, "to": 99, "level": 1}
+    assert any("region to=99" in e for e in validate_problem(p))

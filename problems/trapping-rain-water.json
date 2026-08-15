@@ -14,6 +14,7 @@
   ],
   "signature": "def trap(height):",
   "func": "trap",
+  "view": "bars",
   "steps": [
     {
       "array": [
@@ -43,7 +44,21 @@
         0,
         11
       ],
-      "caption": "One marker at each end; track the tallest wall seen so far from each side."
+      "caption": "One marker at each end; track the tallest wall seen so far from each side.",
+      "water": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
     },
     {
       "array": [
@@ -73,7 +88,21 @@
         0,
         11
       ],
-      "caption": "height[l]=0 matches the tallest-from-the-left wall so far (0); nothing traps here."
+      "caption": "height[l]=0 matches the tallest-from-the-left wall so far (0); nothing traps here.",
+      "water": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
     },
     {
       "array": [
@@ -103,7 +132,21 @@
         1,
         11
       ],
-      "caption": "The left side had the shorter running wall, so it was the one deciding the water level \u2014 move it inward."
+      "caption": "The left side had the shorter running wall, so it was the one deciding the water level \u2014 move it inward.",
+      "water": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
     },
     {
       "array": [
@@ -133,7 +176,21 @@
         1,
         11
       ],
-      "caption": "height[r]=1 is a new tallest-from-the-right wall (1); nothing traps here."
+      "caption": "height[r]=1 is a new tallest-from-the-right wall (1); nothing traps here.",
+      "water": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
     },
     {
       "array": [
@@ -163,7 +220,21 @@
         1,
         10
       ],
-      "caption": "The right side had the shorter running wall, so it was the one deciding the water level \u2014 move it inward."
+      "caption": "The right side had the shorter running wall, so it was the one deciding the water level \u2014 move it inward.",
+      "water": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
     },
     {
       "array": [
@@ -193,7 +264,21 @@
         1,
         10
       ],
-      "caption": "height[l]=1 is a new tallest-from-the-left wall (1); nothing traps here."
+      "caption": "height[l]=1 is a new tallest-from-the-left wall (1); nothing traps here.",
+      "water": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
     },
     {
       "array": [
@@ -223,7 +308,21 @@
         2,
         10
       ],
-      "caption": "The left side had the shorter running wall, so it was the one deciding the water level \u2014 move it inward."
+      "caption": "The left side had the shorter running wall, so it was the one deciding the water level \u2014 move it inward.",
+      "water": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
     },
     {
       "array": [
@@ -253,7 +352,21 @@
         2,
         10
       ],
-      "caption": "height[l]=0 is shorter than the tallest left wall so far (1); 1 unit(s) of water sit here (running total 1)."
+      "caption": "height[l]=0 is shorter than the tallest left wall so far (1); 1 unit(s) of water sit here (running total 1).",
+      "water": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
     },
     {
       "array": [
@@ -283,7 +396,21 @@
         3,
         10
       ],
-      "caption": "The left side had the shorter running wall, so it was the one deciding the water level \u2014 move it inward."
+      "caption": "The left side had the shorter running wall, so it was the one deciding the water level \u2014 move it inward.",
+      "water": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
     },
     {
       "array": [
@@ -313,7 +440,21 @@
         3,
         10
       ],
-      "caption": "height[r]=2 is a new tallest-from-the-right wall (2); nothing traps here."
+      "caption": "height[r]=2 is a new tallest-from-the-right wall (2); nothing traps here.",
+      "water": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
     },
     {
       "array": [
@@ -343,7 +484,21 @@
         3,
         9
       ],
-      "caption": "The right side had the shorter running wall, so it was the one deciding the water level \u2014 move it inward."
+      "caption": "The right side had the shorter running wall, so it was the one deciding the water level \u2014 move it inward.",
+      "water": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
     },
     {
       "array": [
@@ -373,7 +528,21 @@
         3,
         9
       ],
-      "caption": "height[r]=1 is shorter than the tallest right wall so far (2); 1 unit(s) of water sit here (running total 2)."
+      "caption": "height[r]=1 is shorter than the tallest right wall so far (2); 1 unit(s) of water sit here (running total 2).",
+      "water": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0
+      ]
     },
     {
       "array": [
@@ -403,7 +572,21 @@
         3,
         8
       ],
-      "caption": "The right side had the shorter running wall, so it was the one deciding the water level \u2014 move it inward."
+      "caption": "The right side had the shorter running wall, so it was the one deciding the water level \u2014 move it inward.",
+      "water": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0
+      ]
     },
     {
       "array": [
@@ -433,7 +616,21 @@
         3,
         8
       ],
-      "caption": "height[r]=2 matches the tallest-from-the-right wall so far (2); nothing traps here."
+      "caption": "height[r]=2 matches the tallest-from-the-right wall so far (2); nothing traps here.",
+      "water": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0
+      ]
     },
     {
       "array": [
@@ -463,7 +660,21 @@
         3,
         7
       ],
-      "caption": "The right side had the shorter running wall, so it was the one deciding the water level \u2014 move it inward."
+      "caption": "The right side had the shorter running wall, so it was the one deciding the water level \u2014 move it inward.",
+      "water": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0
+      ]
     },
     {
       "array": [
@@ -493,7 +704,21 @@
         3,
         7
       ],
-      "caption": "height[l]=2 is a new tallest-from-the-left wall (2); nothing traps here."
+      "caption": "height[l]=2 is a new tallest-from-the-left wall (2); nothing traps here.",
+      "water": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0
+      ]
     },
     {
       "array": [
@@ -523,7 +748,21 @@
         4,
         7
       ],
-      "caption": "The left side had the shorter running wall, so it was the one deciding the water level \u2014 move it inward."
+      "caption": "The left side had the shorter running wall, so it was the one deciding the water level \u2014 move it inward.",
+      "water": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0
+      ]
     },
     {
       "array": [
@@ -553,7 +792,21 @@
         4,
         7
       ],
-      "caption": "height[l]=1 is shorter than the tallest left wall so far (2); 1 unit(s) of water sit here (running total 3)."
+      "caption": "height[l]=1 is shorter than the tallest left wall so far (2); 1 unit(s) of water sit here (running total 3).",
+      "water": [
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0
+      ]
     },
     {
       "array": [
@@ -583,7 +836,21 @@
         5,
         7
       ],
-      "caption": "The left side had the shorter running wall, so it was the one deciding the water level \u2014 move it inward."
+      "caption": "The left side had the shorter running wall, so it was the one deciding the water level \u2014 move it inward.",
+      "water": [
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0
+      ]
     },
     {
       "array": [
@@ -613,7 +880,21 @@
         5,
         7
       ],
-      "caption": "height[l]=0 is shorter than the tallest left wall so far (2); 2 unit(s) of water sit here (running total 5)."
+      "caption": "height[l]=0 is shorter than the tallest left wall so far (2); 2 unit(s) of water sit here (running total 5).",
+      "water": [
+        0,
+        0,
+        1,
+        0,
+        1,
+        2,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0
+      ]
     },
     {
       "array": [
@@ -643,7 +924,21 @@
         6,
         7
       ],
-      "caption": "The left side had the shorter running wall, so it was the one deciding the water level \u2014 move it inward."
+      "caption": "The left side had the shorter running wall, so it was the one deciding the water level \u2014 move it inward.",
+      "water": [
+        0,
+        0,
+        1,
+        0,
+        1,
+        2,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0
+      ]
     },
     {
       "array": [
@@ -673,7 +968,21 @@
         6,
         7
       ],
-      "caption": "height[l]=1 is shorter than the tallest left wall so far (2); 1 unit(s) of water sit here (running total 6)."
+      "caption": "height[l]=1 is shorter than the tallest left wall so far (2); 1 unit(s) of water sit here (running total 6).",
+      "water": [
+        0,
+        0,
+        1,
+        0,
+        1,
+        2,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0
+      ]
     },
     {
       "array": [
@@ -703,7 +1012,21 @@
         7,
         7
       ],
-      "caption": "The left side had the shorter running wall, so it was the one deciding the water level \u2014 move it inward."
+      "caption": "The left side had the shorter running wall, so it was the one deciding the water level \u2014 move it inward.",
+      "water": [
+        0,
+        0,
+        1,
+        0,
+        1,
+        2,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0
+      ]
     },
     {
       "array": [
@@ -733,7 +1056,21 @@
         7,
         7
       ],
-      "caption": "Markers met. Total trapped water: 6."
+      "caption": "Markers met. Total trapped water: 6.",
+      "water": [
+        0,
+        0,
+        1,
+        0,
+        1,
+        2,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0
+      ]
     }
   ],
   "checkpoints": [

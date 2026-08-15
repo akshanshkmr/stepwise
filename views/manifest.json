@@ -1,0 +1,13 @@
+{
+  "_comment": "The view contract, read by visualizer.js's registry and by tools/validate.py. Adding a view means adding views/<name>.js and one entry here — no other JavaScript and no validator changes.",
+  "cells": {
+    "description": "One labelled box per element. Arrays and strings where the VALUES matter.",
+    "requires": ["array", "pointers"],
+    "optional": []
+  },
+  "bars": {
+    "description": "Columns at true height. Histograms and elevation maps where the SHAPE matters.",
+    "requires": ["array", "pointers"],
+    "optional": ["water", "region"]
+  }
+}

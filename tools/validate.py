@@ -4,7 +4,13 @@ import pathlib
 import sys
 
 REQUIRED = ["id", "title", "statement", "examples", "signature", "func",
-            "steps", "checkpoints", "hints", "tests"]
+            "view", "steps", "checkpoints", "hints", "tests"]
+
+# The view contract is data, shared with visualizer.js. Adding a view means
+# adding views/<name>.js and a manifest entry — this validator needs no edit.
+MANIFEST = json.loads((pathlib.Path(__file__).resolve().parent.parent
+                       / "views" / "manifest.json").read_text())
+VIEWS = {k: v for k, v in MANIFEST.items() if not k.startswith("_")}
 
 # ponytail: substring scan, not a parser. Hints are short prose; if this ever
 # false-positives, tighten the tokens rather than reaching for an AST.
@@ -28,13 +34,36 @@ def validate_problem(p):
     if not p["checkpoints"]:
         errors.append("checkpoints must not be empty")
 
+    view = p["view"]
+    if view not in VIEWS:
+        errors.append(f"unknown view {view!r}; known views: {', '.join(sorted(VIEWS))}")
+        return errors
+    required_keys = ("vars", "highlight", "caption", *VIEWS[view]["requires"])
+    allowed_extra = set(VIEWS[view]["optional"])
+
     for i, step in enumerate(p["steps"]):
-        for key in ("array", "pointers", "vars", "highlight", "caption"):
+        for key in required_keys:
             if key not in step:
-                errors.append(f"steps[{i}] missing key: {key}")
+                errors.append(f"steps[{i}] missing key {key!r} required by view {view!r}")
                 break
         else:
             n = len(step["array"])
+            unknown = set(step) - set(required_keys) - allowed_extra
+            if unknown:
+                errors.append(
+                    f"steps[{i}] has key(s) {sorted(unknown)} that view {view!r} does not "
+                    f"declare; add them to views/manifest.json or drop them")
+            if "water" in step and len(step["water"]) != n:
+                errors.append(
+                    f"steps[{i}] water has {len(step['water'])} entries "
+                    f"but the array has {n}")
+            region = step.get("region")
+            if region is not None:
+                for edge in ("from", "to"):
+                    if not 0 <= region.get(edge, -1) < n:
+                        errors.append(
+                            f"steps[{i}] region {edge}={region.get(edge)} is not an index "
+                            f"into an array of length {n}")
             for h in step["highlight"]:
                 if not isinstance(h, int) or not 0 <= h < n:
                     errors.append(f"steps[{i}] highlight index {h} outside array of length {n}")

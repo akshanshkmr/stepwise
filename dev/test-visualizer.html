@@ -94,5 +94,43 @@ check("checkpoint for a later step does not block yet", () => {
   assert(nextBlockingCheckpoint(cps, new Set(), 1) === null, "too early to block");
 });
 
+
+// --- bars view ---------------------------------------------------------
+const barStep = {
+  array: [0, 1, 0, 2],
+  pointers: { l: 0, r: 3 },
+  vars: { water: 1 },
+  highlight: [3],
+  caption: "x",
+  water: [0, 0, 1, 0],
+};
+
+check("bars view draws one column per element", () => {
+  render(svg, barStep, "bars");
+  assert(svg.querySelectorAll(".column").length === 4, "expected 4 columns");
+});
+
+check("bars view draws water only where depth is non-zero", () => {
+  render(svg, barStep, "bars");
+  assert(svg.querySelectorAll(".water").length === 1, "expected exactly 1 water rect");
+});
+
+check("bars view draws a region slab when given one", () => {
+  render(svg, { ...barStep, water: undefined, region: { from: 0, to: 3, level: 2 } }, "bars");
+  assert(svg.querySelectorAll(".region").length === 1, "expected 1 region slab");
+});
+
+check("switching view clears the previous view's marks", () => {
+  render(svg, barStep, "bars");
+  render(svg, { array: [1, 2], pointers: { l: 0 }, vars: {}, highlight: [], caption: "x" }, "cells");
+  assert(svg.querySelectorAll(".column").length === 0, "stale bars left behind");
+  assert(svg.querySelectorAll(".cell").length === 2, "cells did not render");
+});
+
+check("an unknown view reports itself instead of drawing nothing", () => {
+  render(svg, barStep, "hologram");
+  assert(svg.textContent.includes("hologram"), "no message for unknown view");
+});
+
 document.getElementById("out").textContent = results.join("\n");
 </script>

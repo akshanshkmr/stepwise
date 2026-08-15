@@ -12,16 +12,21 @@ class Recorder:
     def __init__(self):
         self.steps = []
 
-    def step(self, array, pointers, caption, highlight, vars=None):
+    def step(self, array, pointers, caption, highlight, vars=None, **extra):
         """pointers: name -> index into array (drawn as arrows).
-        vars: name -> any scalar the caption talks about (drawn as a readout)."""
-        self.steps.append({
+        vars: name -> any scalar the caption talks about (drawn as a readout).
+        extra: view-specific keys, e.g. the bars view's `water` and `region`.
+        Whatever a view declares in views/manifest.json is passed straight
+        through, so a new view needs no change to this recorder."""
+        step = {
             "array": list(array),
             "pointers": dict(pointers),
             "vars": dict(vars or {}),
             "highlight": list(highlight),
             "caption": caption,
-        })
+        }
+        step.update(extra)
+        self.steps.append(step)
 
 
 def trace_two_sum_ii(rec):
@@ -95,30 +100,36 @@ def trace_container_with_most_water(rec):
     l, r = 0, len(height) - 1
     best = 0
     rec.step(height, {"l": l, "r": r}, "Start as wide as possible: one wall at each end.",
-             [l, r], vars={"best": best})
+             [l, r], vars={"best": best},
+                 region={"from": l, "to": r, "level": min(height[l], height[r])})
     while l < r:
         area = min(height[l], height[r]) * (r - l)
         best = max(best, area)
         rec.step(height, {"l": l, "r": r},
                  f"Width {r - l} times the shorter wall ({min(height[l], height[r])}) = {area}. Best so far: {best}.",
-                 [l, r], vars={"area": area, "best": best})
+                 [l, r], vars={"area": area, "best": best},
+                 region={"from": l, "to": r, "level": min(height[l], height[r])})
         if height[l] < height[r]:
             l += 1
             rec.step(height, {"l": l, "r": r},
                      "The left wall was shorter, so it was the one capping the water — move it inward looking for something taller.",
-                     [l, r], vars={"best": best})
+                     [l, r], vars={"best": best},
+                 region={"from": l, "to": r, "level": min(height[l], height[r])})
         elif height[l] > height[r]:
             r -= 1
             rec.step(height, {"l": l, "r": r},
                      "The right wall was shorter, so it was the one capping the water — move it inward looking for something taller.",
-                     [l, r], vars={"best": best})
+                     [l, r], vars={"best": best},
+                 region={"from": l, "to": r, "level": min(height[l], height[r])})
         else:
             l += 1
             rec.step(height, {"l": l, "r": r},
                      "The walls are tied, so either side is equally responsible for the cap — move the left one inward.",
-                     [l, r], vars={"best": best})
+                     [l, r], vars={"best": best},
+                 region={"from": l, "to": r, "level": min(height[l], height[r])})
     rec.step(height, {"l": l, "r": r}, f"Markers met. Best area found was {best}.",
-             [l, r], vars={"best": best})
+             [l, r], vars={"best": best},
+                 region={"from": l, "to": r, "level": min(height[l], height[r])})
 
 
 def trace_three_sum(rec):
@@ -177,9 +188,11 @@ def trace_trapping_rain_water(rec):
     height = [0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1]
     l, r = 0, len(height) - 1
     left_max = right_max = water = 0
+    depths = [0] * len(height)
     rec.step(height, {"l": l, "r": r},
              "One marker at each end; track the tallest wall seen so far from each side.", [l, r],
-             vars={"left_max": left_max, "right_max": right_max, "water": water})
+             vars={"left_max": left_max, "right_max": right_max, "water": water},
+             water=list(depths))
 
     def scalars():
         return {"left_max": left_max, "right_max": right_max, "water": water}
@@ -194,18 +207,19 @@ def trace_trapping_rain_water(rec):
                          + ("matches the tallest-from-the-left wall so far"
                             if same else "is a new tallest-from-the-left wall")
                          + f" ({left_max}); nothing traps here.",
-                         [l, r], vars=scalars())
+                         [l, r], vars=scalars(), water=list(depths))
             else:
                 gained = left_max - height[l]
                 water += gained
+                depths[l] = gained
                 rec.step(height, {"l": l, "r": r},
                          f"height[l]={height[l]} is shorter than the tallest left wall so far ({left_max}); "
                          f"{gained} unit(s) of water sit here (running total {water}).", [l, r],
-                         vars=scalars())
+                         vars=scalars(), water=list(depths))
             l += 1
             rec.step(height, {"l": l, "r": r},
                      "The left side had the shorter running wall, so it was the one deciding the water level — move it inward.",
-                     [l, r], vars=scalars())
+                     [l, r], vars=scalars(), water=list(depths))
         else:
             if height[r] >= right_max:
                 same = height[r] == right_max
@@ -215,20 +229,21 @@ def trace_trapping_rain_water(rec):
                          + ("matches the tallest-from-the-right wall so far"
                             if same else "is a new tallest-from-the-right wall")
                          + f" ({right_max}); nothing traps here.",
-                         [l, r], vars=scalars())
+                         [l, r], vars=scalars(), water=list(depths))
             else:
                 gained = right_max - height[r]
                 water += gained
+                depths[r] = gained
                 rec.step(height, {"l": l, "r": r},
                          f"height[r]={height[r]} is shorter than the tallest right wall so far ({right_max}); "
                          f"{gained} unit(s) of water sit here (running total {water}).", [l, r],
-                         vars=scalars())
+                         vars=scalars(), water=list(depths))
             r -= 1
             rec.step(height, {"l": l, "r": r},
                      "The right side had the shorter running wall, so it was the one deciding the water level — move it inward.",
-                     [l, r], vars=scalars())
+                     [l, r], vars=scalars(), water=list(depths))
     rec.step(height, {"l": l, "r": r}, f"Markers met. Total trapped water: {water}.", [l, r],
-             vars=scalars())
+             vars=scalars(), water=list(depths))
 
 
 SOLUTIONS = {

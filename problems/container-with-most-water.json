@@ -14,6 +14,7 @@
   ],
   "signature": "def max_area(height):",
   "func": "max_area",
+  "view": "bars",
   "steps": [
     {
       "array": [
@@ -38,7 +39,12 @@
         0,
         8
       ],
-      "caption": "Start as wide as possible: one wall at each end."
+      "caption": "Start as wide as possible: one wall at each end.",
+      "region": {
+        "from": 0,
+        "to": 8,
+        "level": 1
+      }
     },
     {
       "array": [
@@ -64,7 +70,12 @@
         0,
         8
       ],
-      "caption": "Width 8 times the shorter wall (1) = 8. Best so far: 8."
+      "caption": "Width 8 times the shorter wall (1) = 8. Best so far: 8.",
+      "region": {
+        "from": 0,
+        "to": 8,
+        "level": 1
+      }
     },
     {
       "array": [
@@ -89,7 +100,12 @@
         1,
         8
       ],
-      "caption": "The left wall was shorter, so it was the one capping the water \u2014 move it inward looking for something taller."
+      "caption": "The left wall was shorter, so it was the one capping the water \u2014 move it inward looking for something taller.",
+      "region": {
+        "from": 1,
+        "to": 8,
+        "level": 7
+      }
     },
     {
       "array": [
@@ -115,7 +131,12 @@
         1,
         8
       ],
-      "caption": "Width 7 times the shorter wall (7) = 49. Best so far: 49."
+      "caption": "Width 7 times the shorter wall (7) = 49. Best so far: 49.",
+      "region": {
+        "from": 1,
+        "to": 8,
+        "level": 7
+      }
     },
     {
       "array": [
@@ -140,7 +161,12 @@
         1,
         7
       ],
-      "caption": "The right wall was shorter, so it was the one capping the water \u2014 move it inward looking for something taller."
+      "caption": "The right wall was shorter, so it was the one capping the water \u2014 move it inward looking for something taller.",
+      "region": {
+        "from": 1,
+        "to": 7,
+        "level": 3
+      }
     },
     {
       "array": [
@@ -166,7 +192,12 @@
         1,
         7
       ],
-      "caption": "Width 6 times the shorter wall (3) = 18. Best so far: 49."
+      "caption": "Width 6 times the shorter wall (3) = 18. Best so far: 49.",
+      "region": {
+        "from": 1,
+        "to": 7,
+        "level": 3
+      }
     },
     {
       "array": [
@@ -191,7 +222,12 @@
         1,
         6
       ],
-      "caption": "The right wall was shorter, so it was the one capping the water \u2014 move it inward looking for something taller."
+      "caption": "The right wall was shorter, so it was the one capping the water \u2014 move it inward looking for something taller.",
+      "region": {
+        "from": 1,
+        "to": 6,
+        "level": 8
+      }
     },
     {
       "array": [
@@ -217,7 +253,12 @@
         1,
         6
       ],
-      "caption": "Width 5 times the shorter wall (8) = 40. Best so far: 49."
+      "caption": "Width 5 times the shorter wall (8) = 40. Best so far: 49.",
+      "region": {
+        "from": 1,
+        "to": 6,
+        "level": 8
+      }
     },
     {
       "array": [
@@ -242,7 +283,12 @@
         2,
         6
       ],
-      "caption": "The walls are tied, so either side is equally responsible for the cap \u2014 move the left one inward."
+      "caption": "The walls are tied, so either side is equally responsible for the cap \u2014 move the left one inward.",
+      "region": {
+        "from": 2,
+        "to": 6,
+        "level": 6
+      }
     },
     {
       "array": [
@@ -268,7 +314,12 @@
         2,
         6
       ],
-      "caption": "Width 4 times the shorter wall (6) = 24. Best so far: 49."
+      "caption": "Width 4 times the shorter wall (6) = 24. Best so far: 49.",
+      "region": {
+        "from": 2,
+        "to": 6,
+        "level": 6
+      }
     },
     {
       "array": [
@@ -293,7 +344,12 @@
         3,
         6
       ],
-      "caption": "The left wall was shorter, so it was the one capping the water \u2014 move it inward looking for something taller."
+      "caption": "The left wall was shorter, so it was the one capping the water \u2014 move it inward looking for something taller.",
+      "region": {
+        "from": 3,
+        "to": 6,
+        "level": 2
+      }
     },
     {
       "array": [
@@ -319,7 +375,12 @@
         3,
         6
       ],
-      "caption": "Width 3 times the shorter wall (2) = 6. Best so far: 49."
+      "caption": "Width 3 times the shorter wall (2) = 6. Best so far: 49.",
+      "region": {
+        "from": 3,
+        "to": 6,
+        "level": 2
+      }
     },
     {
       "array": [
@@ -344,7 +405,12 @@
         4,
         6
       ],
-      "caption": "The left wall was shorter, so it was the one capping the water \u2014 move it inward looking for something taller."
+      "caption": "The left wall was shorter, so it was the one capping the water \u2014 move it inward looking for something taller.",
+      "region": {
+        "from": 4,
+        "to": 6,
+        "level": 5
+      }
     },
     {
       "array": [
@@ -370,7 +436,12 @@
         4,
         6
       ],
-      "caption": "Width 2 times the shorter wall (5) = 10. Best so far: 49."
+      "caption": "Width 2 times the shorter wall (5) = 10. Best so far: 49.",
+      "region": {
+        "from": 4,
+        "to": 6,
+        "level": 5
+      }
     },
     {
       "array": [
@@ -395,7 +466,12 @@
         5,
         6
       ],
-      "caption": "The left wall was shorter, so it was the one capping the water \u2014 move it inward looking for something taller."
+      "caption": "The left wall was shorter, so it was the one capping the water \u2014 move it inward looking for something taller.",
+      "region": {
+        "from": 5,
+        "to": 6,
+        "level": 4
+      }
     },
     {
       "array": [
@@ -421,7 +497,12 @@
         5,
         6
       ],
-      "caption": "Width 1 times the shorter wall (4) = 4. Best so far: 49."
+      "caption": "Width 1 times the shorter wall (4) = 4. Best so far: 49.",
+      "region": {
+        "from": 5,
+        "to": 6,
+        "level": 4
+      }
     },
     {
       "array": [
@@ -446,7 +527,12 @@
         6,
         6
       ],
-      "caption": "The left wall was shorter, so it was the one capping the water \u2014 move it inward looking for something taller."
+      "caption": "The left wall was shorter, so it was the one capping the water \u2014 move it inward looking for something taller.",
+      "region": {
+        "from": 6,
+        "to": 6,
+        "level": 8
+      }
     },
     {
       "array": [
@@ -471,7 +557,12 @@
         6,
         6
       ],
-      "caption": "Markers met. Best area found was 49."
+      "caption": "Markers met. Best area found was 49.",
+      "region": {
+        "from": 6,
+        "to": 6,
+        "level": 8
+      }
     }
   ],
   "checkpoints": [

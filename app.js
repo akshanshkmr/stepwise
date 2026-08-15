@@ -71,7 +71,7 @@ function renderHints() {
 }
 
 function draw() {
-  render($("viz"), problem.steps[index]);
+  render($("viz"), problem.steps[index], problem.view);
   $("caption").textContent = problem.steps[index].caption ?? "";
   $("step-count").textContent = `${index + 1} / ${problem.steps.length}`;
   $("scrub").value = String(index);

@@ -17,7 +17,7 @@ PORT = 8000
 ALLOWED_FILES = {
     "/", "/index.html", "/app.js", "/visualizer.js", "/runner.js", "/style.css",
 }
-ALLOWED_DIRS = ("/problems/",)
+ALLOWED_DIRS = ("/problems/", "/views/")
 
 
 class AppOnlyHandler(http.server.SimpleHTTPRequestHandler):
@@ -34,6 +34,13 @@ class AppOnlyHandler(http.server.SimpleHTTPRequestHandler):
             self.send_error(404, "Not Found")
             return None
         return super().send_head()
+
+    def end_headers(self):
+        # Local dev server: never serve a stale module. Without this, editing
+        # app.js or a view leaves the browser running the cached copy and you
+        # debug code that is no longer on disk.
+        self.send_header("Cache-Control", "no-store, must-revalidate")
+        super().end_headers()
 
     def list_directory(self, path):
         # ponytail: no directory listings, even for allowed dirs like problems/

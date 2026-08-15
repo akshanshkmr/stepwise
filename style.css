@@ -43,6 +43,16 @@ button.ghost { background: transparent; color: var(--ink); border: 1px solid var
 .cell.hl rect { stroke: var(--hl); stroke-width: 3; fill: #241d0d; }
 .cell .value { fill: var(--ink); font-size: 22px; font-weight: 600; }
 .cell .idx { fill: var(--muted); font-size: 12px; }
+/* bars view: shape problems — elevation maps, histograms, walls holding water */
+.bar .column { fill: #454c63; }
+.bar.hl .column { fill: var(--hl); }
+.bar .value { fill: var(--muted); font-size: 13px; }
+.bar.hl .value { fill: var(--hl); }
+.bar .idx { fill: var(--muted); font-size: 12px; }
+.water { fill: #2f6fb8; fill-opacity: .85; }
+.region { fill: #2f6fb8; fill-opacity: .28; }
+.baseline { stroke: var(--line); stroke-width: 2; }
+
 .pointer text { fill: var(--accent); font-size: 15px; font-weight: 600; }
 /* Oversized so the readout stays legible when a wide array shrinks the whole SVG. */
 .readout { fill: var(--muted); font-size: 26px; }
