@@ -72,8 +72,12 @@
     </section>
 
     <section class="column right" id="code-pane">
+      <div id="lock" hidden>
+        <p class="lock-title">Predict first</p>
+        <p class="lock-body" id="lock-body"></p>
+      </div>
       <label for="editor">Your solution</label>
-      <div class="editor-wrap">
+      <div class="editor-wrap" id="editor-wrap">
         <pre id="gutter" aria-hidden="true"></pre>
         <div class="editor-field">
           <pre id="highlight" aria-hidden="true"><code></code></pre>

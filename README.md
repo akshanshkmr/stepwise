@@ -60,6 +60,14 @@ tree, graph) means adding `views/<name>.js` and an entry in
 `views/manifest.json` — the dispatcher, the app, the recorder and the validator
 all read that manifest and need no edit.
 
+## Predict before you write
+
+The editor stays closed until you have answered a problem's checkpoints. This is
+the product's claim taken seriously: it used to be possible to ignore the
+walkthrough entirely and go straight to the code, which made the anti-memorization
+mechanic opt-in. It is an experiment — set `GATE_EDITOR` to `false` in `app.js`
+to turn it off in one line. Solved problems stay open.
+
 ## Progress
 
 Solving a problem (every test passing once) ticks it in the sidebar and advances
@@ -72,6 +80,10 @@ checkpoints, your code, and which sections you collapsed all live in
 ```bash
 python3 -m pytest tools/ -v && python3 tools/validate.py
 ```
+
+`node dev/test-node.mjs` runs the browser-free logic — the two gates, the storage
+migration, and the highlighter's escaping. CI runs that plus the Python suites and
+checks that regenerating the traces is a no-op.
 
 Browser checks need the dev harnesses, which `serve.py` deliberately hides. Run the
 plain, everything-exposed server instead — dev-only, since it also serves the

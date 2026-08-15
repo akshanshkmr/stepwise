@@ -11,7 +11,40 @@ export function nextBlockingCheckpoint(checkpoints, answered, index) {
   return null;
 }
 
-if (document.getElementById("viz")) {
+/** The product's claim is that you predict before you write. That was only true
+ *  if you chose to use the walkthrough — the editor was always open, so the
+ *  mechanic was opt-in. It is now the gate to the editor.
+ *
+ *  Set GATE_EDITOR to false to run without it: the point of putting it behind
+ *  one flag is that killing the experiment costs one line, not a refactor. */
+/* Progress records carry their shape's version. Without it, the next change to
+   what we store reads old records as if they were new ones — silently wrong
+   rather than loudly missing. Unknown or newer versions are discarded rather
+   than guessed at: losing a hint count is recoverable, showing someone a
+   half-migrated record is not. */
+const SCHEMA = 2;
+
+/** Brings a stored record up to SCHEMA, or returns null if it cannot be
+ *  trusted. Exported so the shape rules are testable without a browser. */
+export function migrate(raw) {
+  if (!raw || typeof raw !== "object") return null;
+  if (Object.keys(raw).length === 0) return raw;          // nothing stored yet
+  const v = raw.v ?? 1;
+  if (v > SCHEMA) return null;                            // written by a newer build
+  if (v === 1) return { ...raw, v: SCHEMA, solved: raw.solved === true };
+  return raw;
+}
+
+export const GATE_EDITOR = true;
+
+/** Checkpoints still owed before the editor opens, given a problem's
+ *  checkpoints, what has been answered, and whether it is already solved. */
+export function predictionsOwed(checkpoints, answered, solved) {
+  if (!GATE_EDITOR || solved) return 0;
+  return checkpoints.reduce((n, _, i) => n + (answered.has(i) ? 0 : 1), 0);
+}
+
+if (typeof document !== "undefined" && document.getElementById("viz")) {
 
 const $ = (id) => document.getElementById(id);
 let problem = null, index = 0, answered = new Set(), hintsUsed = 0, code = "";
@@ -25,6 +58,7 @@ const storageKey = () => `codeteach:${problem.id}`;
 
 const COLLAPSED_KEY = "codeteach:collapsed";
 
+
 function readCollapsed() {
   try { return JSON.parse(localStorage.getItem(COLLAPSED_KEY) ?? "[]"); }
   catch { return []; }
@@ -33,24 +67,26 @@ function readCollapsed() {
 /** Progress for one problem, readable without loading it — the sidebar needs
  *  every problem's state before any of them is open. */
 function progressOf(id) {
-  try { return JSON.parse(localStorage.getItem(`codeteach:${id}`) ?? "{}"); }
+  try { return migrate(JSON.parse(localStorage.getItem(`codeteach:${id}`) ?? "{}")) ?? {}; }
   catch { return {}; }
 }
 
 function save() {
   localStorage.setItem(storageKey(),
-    JSON.stringify({ answered: [...answered], hintsUsed, solved,
+    JSON.stringify({ v: SCHEMA, answered: [...answered], hintsUsed, solved,
                      code: $("editor").value }));
 }
 
 function load() {
+  const blank = () => { answered = new Set(); hintsUsed = 0; code = ""; solved = false; };
   try {
-    const raw = JSON.parse(localStorage.getItem(storageKey()) ?? "{}");
+    const raw = migrate(JSON.parse(localStorage.getItem(storageKey()) ?? "{}"));
+    if (!raw) { blank(); return; }
     answered = new Set(raw.answered ?? []);
     hintsUsed = raw.hintsUsed ?? 0;
     code = raw.code ?? "";
     solved = raw.solved === true;
-  } catch { answered = new Set(); hintsUsed = 0; code = ""; solved = false; }
+  } catch { blank(); }
 }
 
 async function loadProblem(id) {
@@ -78,6 +114,7 @@ async function loadProblem(id) {
   $("results").replaceChildren();
   renderHints();
   draw();
+  updateLock();
 }
 
 // ponytail: bold + inline code only. Problem statements are ours, not user input.
@@ -128,6 +165,7 @@ function draw() {
         answered.add(blocked);
         save();
         draw();
+        updateLock();
         $("checkpoint").hidden = false;
         $("cp-question").textContent = "Right.";
         $("cp-options").replaceChildren();
@@ -172,6 +210,28 @@ $("editor").onscroll = () => {
   $("highlight").scrollTop = $("editor").scrollTop;
   $("highlight").scrollLeft = $("editor").scrollLeft;
 };
+
+/** Opens or closes the editor according to how many predictions are still
+ *  owed. Solved problems stay open so returning to your own code is free. */
+function updateLock() {
+  const owed = predictionsOwed(problem.checkpoints, answered, solved);
+  const locked = owed > 0;
+
+  $("lock").hidden = !locked;
+  $("editor").readOnly = locked;
+  $("run").disabled = locked;
+  $("viz-mine").disabled = locked;
+  $("editor-wrap").classList.toggle("locked", locked);
+
+  if (locked) {
+    const total = problem.checkpoints.length;
+    $("lock-body").textContent =
+      `Step through the walkthrough and answer ${owed === total
+        ? `its ${total} question${total === 1 ? "" : "s"}`
+        : `the remaining ${owed} of ${total}`}. ` +
+      `Committing to an answer before you see it is the whole point.`;
+  }
+}
 
 /** Repaints the highlight layer sitting behind the transparent textarea. */
 function paint() {
@@ -289,6 +349,7 @@ $("run").onclick = async () => {
       solved = true;
       save();
       markSolved(ran.id);
+      updateLock();
     }
   } catch (err) {
     if (!stale()) $("results").textContent = `${err.message} — check your connection and press Run again.`;
@@ -350,6 +411,7 @@ async function buildSidebar() {
 
   const ids = [];
   const nodes = [];
+  const pending = [];
 
   const collapsed = new Set(readCollapsed());
 
@@ -363,14 +425,11 @@ async function buildSidebar() {
     count.dataset.pattern = name;
     count.textContent = problems.length ? `${done}/${problems.length}` : "soon";
 
-    // A pattern with nothing in it has nothing to expand, so it stays a plain
-    // row rather than a disclosure that opens onto emptiness.
+    // Empty patterns are collected into one line at the end. Sixteen "soon"
+    // rows read as a roadmap we have committed to; one line is honest about
+    // what exists today without hiding where this is going.
     if (!problems.length) {
-      const head = document.createElement("p");
-      head.className = "group-head";
-      head.append(name, count);
-      group.appendChild(head);
-      nodes.push(group);
+      pending.push(name);
       continue;
     }
 
@@ -406,6 +465,27 @@ async function buildSidebar() {
     details.appendChild(ul);
     group.appendChild(details);
     nodes.push(group);
+  }
+
+  if (pending.length) {
+    const li = document.createElement("li");
+    li.className = "group pending";
+    const d = document.createElement("details");
+    const sum = document.createElement("summary");
+    sum.className = "group-head";
+    sum.innerHTML = '<span class="chevron" aria-hidden="true"></span>';
+    sum.append(`${pending.length} more patterns`);
+    d.appendChild(sum);
+    const ul = document.createElement("ul");
+    for (const name of pending) {
+      const item = document.createElement("li");
+      item.className = "pending-item";
+      item.textContent = name;
+      ul.appendChild(item);
+    }
+    d.appendChild(ul);
+    li.appendChild(d);
+    nodes.push(li);
   }
 
   $("problem-list").replaceChildren(...nodes);

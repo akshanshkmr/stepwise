@@ -144,9 +144,14 @@ select, button, textarea, input { font: inherit; color: inherit; }
   font-variant-numeric: tabular-nums;
 }
 .count.all { color: var(--success); }
-/* Patterns with no problems yet say so plainly instead of pretending. */
-.group.empty .group-head { color: var(--faint); }
-.group.empty .count { background: transparent; font-style: italic; }
+/* Patterns with no problems yet are one collapsed line, not sixteen rows
+   implying work that has not been done. */
+.group.pending { margin-top: .75rem; }
+.group.pending .group-head { color: var(--faint); }
+.pending-item {
+  padding: .3rem .6rem .3rem 1.6rem;
+  font-size: .82rem; color: var(--faint);
+}
 
 #problem-list button {
   width: 100%; text-align: left;
@@ -357,6 +362,20 @@ button:disabled { opacity: .4; cursor: not-allowed; }
 }
 
 /* ---- editor ------------------------------------------------------------ */
+
+#lock {
+  padding: .9rem 1rem; margin-bottom: 1rem;
+  background: color-mix(in srgb, var(--accent) 10%, var(--surface-2));
+  border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+  border-radius: var(--r-md);
+}
+.lock-title {
+  margin: 0 0 .3rem; font-size: .9rem; font-weight: 600; color: var(--text);
+}
+.lock-body { margin: 0; font-size: .85rem; color: var(--muted); }
+
+.editor-wrap.locked { opacity: .45; }
+.editor-wrap.locked #editor { cursor: not-allowed; }
 
 #code-pane label {
   display: block; margin-bottom: .5rem;

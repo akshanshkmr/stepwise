@@ -1,0 +1,41 @@
+name: checks
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install test dependency
+        run: pip install -r requirements.txt
+
+      - name: Content and tooling tests
+        run: python3 -m pytest tools/ -v
+
+      # Catches a problem file whose trace, checkpoints or hints drifted out of
+      # step with the schema — the failure mode that reaches learners directly.
+      - name: Validate every problem
+        run: python3 tools/validate.py
+
+      # Regenerating must be a no-op: if it is not, the committed traces do not
+      # match the solutions that produced them.
+      - name: Traces match their solutions
+        run: |
+          python3 tools/record.py
+          git diff --exit-code -- problems/ \
+            || (echo "::error::problems/ is stale — run tools/record.py and commit" && exit 1)
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Browser-free logic tests
+        run: node dev/test-node.mjs
