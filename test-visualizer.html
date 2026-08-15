@@ -1,0 +1,61 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>visualizer self-check</title>
+<svg id="s" viewBox="0 0 800 220"></svg>
+<pre id="out"></pre>
+<script type="module">
+import { render } from "./visualizer.js";
+
+const svg = document.getElementById("s");
+const results = [];
+const check = (name, fn) => {
+  try { fn(); results.push("PASS " + name); }
+  catch (e) { results.push("FAIL " + name + " — " + e.message); }
+};
+const assert = (cond, msg) => { if (!cond) throw new Error(msg); };
+
+const step = {
+  array: [2, 7, 11, 15],
+  vars: { l: 0, r: 3, sum: 17, target: 9 },
+  highlight: [0, 3],
+  caption: "sum is 17",
+};
+
+check("draws one box per element", () => {
+  render(svg, step);
+  assert(svg.querySelectorAll(".cell").length === 4, "expected 4 cells");
+});
+
+check("highlights only the highlighted indices", () => {
+  render(svg, step);
+  const hl = [...svg.querySelectorAll(".cell.hl")].map(e => Number(e.dataset.index));
+  assert(JSON.stringify(hl) === "[0,3]", "got " + JSON.stringify(hl));
+});
+
+check("draws a pointer for each index-valued var", () => {
+  render(svg, step);
+  const names = [...svg.querySelectorAll(".pointer")].map(e => e.dataset.name).sort();
+  assert(JSON.stringify(names) === '["l","r"]', "got " + JSON.stringify(names));
+});
+
+check("non-index vars go to the readout, not the pointers", () => {
+  render(svg, step);
+  const readout = svg.querySelector(".readout").textContent;
+  assert(readout.includes("sum = 17"), "readout missing sum: " + readout);
+  assert(readout.includes("target = 9"), "readout missing target: " + readout);
+});
+
+check("re-render clears the previous frame", () => {
+  render(svg, step);
+  render(svg, { array: [1, 2], vars: { l: 0 }, highlight: [], caption: "x" });
+  assert(svg.querySelectorAll(".cell").length === 2, "stale cells left behind");
+  assert(svg.querySelectorAll(".pointer").length === 1, "stale pointers left behind");
+});
+
+check("two pointers on the same index both render", () => {
+  render(svg, { array: [1, 2, 3], vars: { l: 1, r: 1 }, highlight: [1], caption: "meet" });
+  assert(svg.querySelectorAll(".pointer").length === 2, "expected 2 pointers");
+});
+
+document.getElementById("out").textContent = results.join("\n");
+</script>
