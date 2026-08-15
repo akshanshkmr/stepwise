@@ -14,6 +14,8 @@
   ],
   "signature": "def is_palindrome(s):",
   "func": "is_palindrome",
+  "pattern": "Two Pointers",
+  "order": 1,
   "view": "cells",
   "steps": [
     {

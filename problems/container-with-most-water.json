@@ -14,6 +14,8 @@
   ],
   "signature": "def max_area(height):",
   "func": "max_area",
+  "pattern": "Two Pointers",
+  "order": 4,
   "view": "bars",
   "steps": [
     {

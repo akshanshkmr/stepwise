@@ -9,6 +9,8 @@ GOOD = {
     "examples": [{"input": "numbers = [2,7,11,15], target = 9", "output": "[1,2]"}],
     "signature": "def two_sum(numbers, target):",
     "func": "two_sum",
+    "pattern": "Two Pointers",
+    "order": 1,
     "view": "cells",
     "steps": [
         {"array": [2, 7, 11, 15], "pointers": {"l": 0, "r": 3}, "vars": {"sum": 17},
@@ -126,3 +128,9 @@ def test_region_edge_outside_array_reported():
     p["view"] = "bars"
     p["steps"][0]["region"] = {"from": 0, "to": 99, "level": 1}
     assert any("region to=99" in e for e in validate_problem(p))
+
+
+def test_unknown_pattern_reported():
+    p = copy.deepcopy(GOOD)
+    p["pattern"] = "Vibes"
+    assert any("unknown pattern" in e for e in validate_problem(p))

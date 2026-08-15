@@ -4,7 +4,11 @@ import pathlib
 import sys
 
 REQUIRED = ["id", "title", "statement", "examples", "signature", "func",
-            "view", "steps", "checkpoints", "hints", "tests"]
+            "pattern", "order", "view", "steps", "checkpoints", "hints", "tests"]
+
+# The curriculum, shared with the sidebar and the recorder.
+PATTERNS = set(json.loads((pathlib.Path(__file__).resolve().parent.parent
+                          / "patterns.json").read_text())["order"])
 
 # The view contract is data, shared with visualizer.js. Adding a view means
 # adding views/<name>.js and a manifest entry — this validator needs no edit.
@@ -33,6 +37,9 @@ def validate_problem(p):
         errors.append("hints must not be empty")
     if not p["checkpoints"]:
         errors.append("checkpoints must not be empty")
+
+    if p["pattern"] not in PATTERNS:
+        errors.append(f"unknown pattern {p['pattern']!r}; add it to patterns.json")
 
     view = p["view"]
     if view not in VIEWS:
@@ -97,7 +104,8 @@ def validate_problem(p):
 
 def main():
     root = pathlib.Path(__file__).resolve().parent.parent
-    files = sorted((root / "problems").glob("*.json"))
+    files = [f for f in sorted((root / "problems").glob("*.json"))
+             if f.name != "index.json"]
     if not files:
         print("no problem files found")
         return 1

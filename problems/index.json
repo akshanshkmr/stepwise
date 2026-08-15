@@ -1,0 +1,108 @@
+{
+  "patterns": [
+    {
+      "name": "Arrays & Hashing",
+      "problems": [
+        {
+          "id": "move-zeroes",
+          "title": "Move Zeroes",
+          "order": 1
+        }
+      ]
+    },
+    {
+      "name": "Two Pointers",
+      "problems": [
+        {
+          "id": "valid-palindrome",
+          "title": "Valid Palindrome",
+          "order": 1
+        },
+        {
+          "id": "two-sum-ii",
+          "title": "Two Sum II \u2014 Input Array Is Sorted",
+          "order": 2
+        },
+        {
+          "id": "3sum",
+          "title": "3Sum",
+          "order": 3
+        },
+        {
+          "id": "container-with-most-water",
+          "title": "Container With Most Water",
+          "order": 4
+        },
+        {
+          "id": "trapping-rain-water",
+          "title": "Trapping Rain Water",
+          "order": 5
+        }
+      ]
+    },
+    {
+      "name": "Sliding Window",
+      "problems": []
+    },
+    {
+      "name": "Stack",
+      "problems": []
+    },
+    {
+      "name": "Binary Search",
+      "problems": []
+    },
+    {
+      "name": "Linked List",
+      "problems": []
+    },
+    {
+      "name": "Trees",
+      "problems": []
+    },
+    {
+      "name": "Tries",
+      "problems": []
+    },
+    {
+      "name": "Heap / Priority Queue",
+      "problems": []
+    },
+    {
+      "name": "Backtracking",
+      "problems": []
+    },
+    {
+      "name": "Graphs",
+      "problems": []
+    },
+    {
+      "name": "Advanced Graphs",
+      "problems": []
+    },
+    {
+      "name": "1-D Dynamic Programming",
+      "problems": []
+    },
+    {
+      "name": "2-D Dynamic Programming",
+      "problems": []
+    },
+    {
+      "name": "Greedy",
+      "problems": []
+    },
+    {
+      "name": "Intervals",
+      "problems": []
+    },
+    {
+      "name": "Math & Geometry",
+      "problems": []
+    },
+    {
+      "name": "Bit Manipulation",
+      "problems": []
+    }
+  ]
+}

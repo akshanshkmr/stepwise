@@ -29,7 +29,9 @@ and turns them into animation frames.
 1. In `tools/record.py`, add a plain `solve_<name>(...)` function and an `AUTO`
    entry giving it an example input.
 2. Create `problems/<id>.json` with everything except `steps` (leave it `[]`):
-   statement, examples, signature, func, view, hints, tests.
+   statement, examples, signature, func, pattern, order, view, hints, tests.
+   `pattern` must be one of the categories in `patterns.json`; `order` places it
+   within that pattern, easiest first.
 3. `python3 tools/record.py` — the trace appears, with mechanical captions.
 4. Read the generated frames and write real captions for the handful that sit at
    decisions, via `CAPTIONS[<id>][<frame index>]`. This is the teaching, and it
@@ -41,6 +43,14 @@ and turns them into animation frames.
 the hand-written `trace_<name>(rec)` route instead, which is still supported and
 still the only way to emit view-specific overlays such as the bars view's
 `water` and `region`.
+
+### Curriculum
+
+`patterns.json` holds the categories in teaching order. Each problem declares one
+as its `pattern`, and `tools/record.py` generates `problems/index.json` — the
+grouped list the sidebar renders. Categories with no problems yet are shown as
+"soon" rather than hidden, so the shape of the curriculum is visible. Adding a
+category is an edit to `patterns.json` and nowhere else.
 
 ### Views
 

@@ -14,6 +14,8 @@
   ],
   "signature": "def two_sum(numbers, target):",
   "func": "two_sum",
+  "pattern": "Two Pointers",
+  "order": 2,
   "view": "cells",
   "steps": [
     {

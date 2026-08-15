@@ -419,7 +419,33 @@ def main():
         path.write_text(json.dumps(problem, indent=2) + "\n")
         print(f"{path.name}: wrote {len(written)} steps, "
               f"{len(problem['checkpoints'])} checkpoints [{kind}]")
+
+    write_index()
     return 0
+
+
+def write_index():
+    """The sidebar's table of contents: the curriculum in teaching order with
+    each pattern's problems under it. Generated so it cannot drift from the
+    problem files, and small enough that the app fetches it before anything
+    else."""
+    roadmap = json.loads((ROOT / "patterns.json").read_text())["order"]
+    by_pattern = {name: [] for name in roadmap}
+    for path in sorted((ROOT / "problems").glob("*.json")):
+        if path.name == "index.json":
+            continue
+        p = json.loads(path.read_text())
+        by_pattern[p["pattern"]].append(
+            {"id": p["id"], "title": p["title"], "order": p["order"]})
+    for problems in by_pattern.values():
+        problems.sort(key=lambda x: x["order"])
+
+    index = {"patterns": [{"name": name, "problems": by_pattern[name]}
+                          for name in roadmap]}
+    (ROOT / "problems" / "index.json").write_text(json.dumps(index, indent=2) + "\n")
+    filled = sum(1 for name in roadmap if by_pattern[name])
+    total = sum(len(v) for v in by_pattern.values())
+    print(f"index.json: {total} problems across {filled} of {len(roadmap)} patterns")
 
 
 if __name__ == "__main__":
