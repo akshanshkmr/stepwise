@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CodeTeach — Two Pointers</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <h1>CodeTeach</h1>
+  <select id="picker" aria-label="Choose a problem"></select>
+</header>
+
+<main>
+  <section class="pane" id="problem-pane">
+    <h2 id="title"></h2>
+    <div id="statement"></div>
+    <h3>Examples</h3>
+    <div id="examples"></div>
+    <h3>Hints</h3>
+    <div id="hints"></div>
+    <button id="hint-btn">Reveal a hint</button>
+    <p id="hint-count" class="muted"></p>
+  </section>
+
+  <section class="pane" id="viz-pane">
+    <svg id="viz" viewBox="0 0 800 260" role="img" aria-label="Algorithm animation"></svg>
+    <div id="checkpoint" hidden>
+      <p id="cp-question"></p>
+      <div id="cp-options"></div>
+      <p id="cp-feedback" role="status"></p>
+    </div>
+    <div class="controls">
+      <button id="first" aria-label="First step">⏮</button>
+      <button id="prev" aria-label="Previous step">◀</button>
+      <button id="next" aria-label="Next step">▶</button>
+      <button id="last" aria-label="Last step">⏭</button>
+      <input id="scrub" type="range" min="0" value="0" aria-label="Step">
+      <span id="step-count" class="muted"></span>
+    </div>
+  </section>
+
+  <section class="pane" id="code-pane">
+    <label for="editor">Your solution</label>
+    <textarea id="editor" spellcheck="false"></textarea>
+    <button id="run">Run tests</button>
+    <div id="results"></div>
+  </section>
+</main>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>

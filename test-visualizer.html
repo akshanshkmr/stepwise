@@ -57,5 +57,26 @@ check("two pointers on the same index both render", () => {
   assert(svg.querySelectorAll(".pointer").length === 2, "expected 2 pointers");
 });
 
+import { nextBlockingCheckpoint } from "./app.js";
+
+check("no checkpoint means no block", () => {
+  assert(nextBlockingCheckpoint([], new Set(), 0) === null, "should not block");
+});
+
+check("checkpoint at current step blocks when unanswered", () => {
+  const cps = [{ afterStep: 1 }, { afterStep: 3 }];
+  assert(nextBlockingCheckpoint(cps, new Set(), 1) === 0, "should block on cp 0");
+});
+
+check("answered checkpoint does not block", () => {
+  const cps = [{ afterStep: 1 }];
+  assert(nextBlockingCheckpoint(cps, new Set([0]), 1) === null, "answered should pass");
+});
+
+check("checkpoint for a later step does not block yet", () => {
+  const cps = [{ afterStep: 3 }];
+  assert(nextBlockingCheckpoint(cps, new Set(), 1) === null, "too early to block");
+});
+
 document.getElementById("out").textContent = results.join("\n");
 </script>
