@@ -20,7 +20,7 @@ PORT = 8000
 # This used to be a hand-listed set of filenames, and three separate features
 # shipped broken because a new file was not added to it. The rule is now
 # structural: adding app.js's next neighbour needs no edit here.
-ALLOWED_ROOT_SUFFIXES = (".html", ".js", ".css")
+ALLOWED_ROOT_SUFFIXES = (".html", ".js", ".css", ".svg")
 ALLOWED_FILES = {
     "/",
     # The tracer, not a solution: it animates whatever function it is handed.

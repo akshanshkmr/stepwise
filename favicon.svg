@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- Three ascending steps: the app's name, and the shape of a bars-view
+       walkthrough. The dot is the marker that stops on one of them. -->
+  <rect width="32" height="32" rx="7" fill="#3b82f6"/>
+  <g fill="#fff">
+    <rect x="6"  y="20" width="6" height="6" rx="1.5"/>
+    <rect x="13" y="15" width="6" height="11" rx="1.5"/>
+    <rect x="20" y="10" width="6" height="16" rx="1.5"/>
+  </g>
+  <!-- The marker sits on the middle step, not the tallest: stopped partway
+       through, which is the product. Over the tall bar it read as a dotted i. -->
+  <circle cx="16" cy="8" r="2.6" fill="#fff" opacity=".95"/>
+</svg>
