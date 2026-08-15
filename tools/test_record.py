@@ -12,11 +12,12 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 
 def test_recorder_captures_frames():
     rec = Recorder()
-    rec.step([1, 2, 3], {"l": 0}, "first", highlight=[0])
+    rec.step([1, 2, 3], {"l": 0}, "first", highlight=[0], vars={"sum": 4})
     rec.step([1, 2, 3], {"l": 1}, "second", highlight=[1])
     assert len(rec.steps) == 2
-    assert rec.steps[0] == {"array": [1, 2, 3], "vars": {"l": 0},
+    assert rec.steps[0] == {"array": [1, 2, 3], "pointers": {"l": 0}, "vars": {"sum": 4},
                             "highlight": [0], "caption": "first"}
+    assert rec.steps[1]["vars"] == {}
 
 
 def test_recorder_copies_array_so_later_mutation_does_not_leak():
@@ -36,6 +37,16 @@ def test_every_solution_produces_a_valid_trace():
             n = len(step["array"])
             assert all(0 <= h < n for h in step["highlight"]), f"{pid} step {i} bad highlight"
             assert step["caption"], f"{pid} step {i} has empty caption"
+            assert all(0 <= v < n for v in step["pointers"].values()), f"{pid} step {i} bad pointer"
+
+
+def test_every_step_carries_the_scalars_its_captions_discuss():
+    """Every trace shows a readout: pointers alone are not the story."""
+    for pid, trace_fn in SOLUTIONS.items():
+        rec = Recorder()
+        trace_fn(rec)
+        for i, step in enumerate(rec.steps):
+            assert step["vars"], f"{pid} step {i} has an empty readout"
 
 
 def test_regenerated_problem_files_are_valid():

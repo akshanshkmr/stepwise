@@ -45,7 +45,7 @@ button.ghost { background: transparent; color: var(--ink); border: 1px solid var
 .cell .idx { fill: var(--muted); font-size: 12px; }
 .pointer text { fill: var(--accent); font-size: 15px; font-weight: 600; }
 .readout { fill: var(--muted); font-size: 15px; }
-.caption { fill: var(--ink); font-size: 16px; }
+#caption { margin: .4rem 0 0; font-size: 1rem; min-height: 1.55em; }
 
 .controls { display: flex; align-items: center; gap: .5rem; margin-top: 1rem; }
 #scrub { flex: 1; }

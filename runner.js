@@ -59,7 +59,8 @@ def _run_tests(source, func_name, tests_json):
             actual = fn(*[_copy(a) for a in t["args"]])
             sys.settrace(None)
             try:
-                json.dumps(actual)
+                # Round-trip so a tuple compares equal to the list in "expect".
+                actual = json.loads(json.dumps(actual))
             except TypeError as e:
                 results.append({"args": t["args"], "expect": t["expect"], "actual": None,
                                 "pass": False, "error": f"TypeError: {e}"})

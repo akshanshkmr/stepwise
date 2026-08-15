@@ -28,9 +28,12 @@
         "a",
         "r"
       ],
-      "vars": {
+      "pointers": {
         "l": 0,
         "r": 9
+      },
+      "vars": {
+        "verdict": "unknown"
       },
       "highlight": [
         0,
@@ -51,9 +54,12 @@
         "a",
         "r"
       ],
-      "vars": {
+      "pointers": {
         "l": 1,
         "r": 8
+      },
+      "vars": {
+        "verdict": "unknown"
       },
       "highlight": [
         1,
@@ -74,9 +80,12 @@
         "a",
         "r"
       ],
-      "vars": {
+      "pointers": {
         "l": 2,
         "r": 7
+      },
+      "vars": {
+        "verdict": "unknown"
       },
       "highlight": [
         2,
@@ -97,9 +106,12 @@
         "a",
         "r"
       ],
-      "vars": {
+      "pointers": {
         "l": 3,
         "r": 6
+      },
+      "vars": {
+        "verdict": "unknown"
       },
       "highlight": [
         3,
@@ -120,9 +132,12 @@
         "a",
         "r"
       ],
-      "vars": {
+      "pointers": {
         "l": 3,
         "r": 5
+      },
+      "vars": {
+        "verdict": "unknown"
       },
       "highlight": [
         3,
@@ -143,15 +158,98 @@
         "a",
         "r"
       ],
-      "vars": {
+      "pointers": {
         "l": 3,
         "r": 5
+      },
+      "vars": {
+        "verdict": "false"
       },
       "highlight": [
         3,
         5
       ],
       "caption": "'e' and 'a' disagree, so this can't be a palindrome."
+    },
+    {
+      "array": [
+        "a",
+        "b",
+        "_",
+        "a"
+      ],
+      "pointers": {
+        "l": 0,
+        "r": 3
+      },
+      "vars": {
+        "verdict": "unknown"
+      },
+      "highlight": [
+        0,
+        3
+      ],
+      "caption": "New string, same method: markers at each end of \"ab_a\"."
+    },
+    {
+      "array": [
+        "a",
+        "b",
+        "_",
+        "a"
+      ],
+      "pointers": {
+        "l": 1,
+        "r": 2
+      },
+      "vars": {
+        "verdict": "unknown"
+      },
+      "highlight": [
+        1,
+        2
+      ],
+      "caption": "Those matched, so move both markers inward."
+    },
+    {
+      "array": [
+        "a",
+        "b",
+        "_",
+        "a"
+      ],
+      "pointers": {
+        "l": 1,
+        "r": 1
+      },
+      "vars": {
+        "verdict": "unknown"
+      },
+      "highlight": [
+        1,
+        1
+      ],
+      "caption": "That character isn't a letter or digit, so skip it and slide r left."
+    },
+    {
+      "array": [
+        "a",
+        "b",
+        "_",
+        "a"
+      ],
+      "pointers": {
+        "l": 1,
+        "r": 1
+      },
+      "vars": {
+        "verdict": "true"
+      },
+      "highlight": [
+        1,
+        1
+      ],
+      "caption": "Markers crossed without ever disagreeing, so it is a palindrome."
     }
   ],
   "checkpoints": [
@@ -167,13 +265,14 @@
     },
     {
       "afterStep": 4,
-      "question": "Now l points at 'e' and r points at 'a'. What determines the final answer?",
+      "question": "l points at 'e' and r points at 'a'. What does that tell you about the answer?",
       "options": [
-        "They must match for this to be a palindrome; since they differ, the answer is false right now",
-        "Keep going \u2014 a mismatch here doesn't necessarily rule out a palindrome"
+        "Nothing yet \u2014 keep sliding r left until it finds a character that matches 'e'",
+        "Nothing yet \u2014 the markers must actually cross before any verdict is possible",
+        "It is settled: a mirrored pair disagrees, so the answer is false"
       ],
-      "answer": "They must match for this to be a palindrome; since they differ, the answer is false right now",
-      "why": "Every mirrored pair has to agree. One disagreement is enough to prove it's not a palindrome, so you can stop immediately."
+      "answer": "It is settled: a mirrored pair disagrees, so the answer is false",
+      "why": "Every mirrored pair has to agree. Searching onward for a matching character would be solving a different problem, and waiting for the markers to cross cannot un-do a disagreement, so you can stop the moment one appears."
     }
   ],
   "hints": [

@@ -19,18 +19,19 @@ visualizer types, more than one pattern. `localStorage` is the only persistence.
 
 ## Architecture
 
-Static site. No backend, no build step, no framework. Opening `index.html`
-from disk or any static host runs the app.
+Static site. No backend, no build step, no framework. It must be served over
+`http://` — problems are fetched at load, so `file://` does not work at all.
 
 ```
 index.html        layout + pane markup
 style.css
 app.js            state machine: load problem, drive player, gate checkpoints, reveal hints
-visualizer.js     SVG array renderer: boxes, pointer arrows, highlights, caption
+visualizer.js     SVG array renderer: boxes, pointer arrows, highlights, readout
 runner.js         lazy Pyodide load, execute learner code against tests
 problems/*.json   one file per problem — the entire content contract
 tools/record.py   authoring-time step recorder (not shipped to the browser)
 tools/validate.py the one runnable check
+dev/*.html        browser self-check harnesses (hold reference solutions; not served as part of the app)
 ```
 
 Each unit has one job and a narrow interface: `visualizer.render(step)`,
@@ -49,7 +50,7 @@ A problem is one JSON file:
   "examples": [{ "input": "...", "output": "..." }],
   "signature": "def two_sum(numbers, target):",
   "steps": [
-    { "array": [2,7,11,15], "vars": {"l":0,"r":3,"sum":17},
+    { "array": [2,7,11,15], "pointers": {"l":0,"r":3}, "vars": {"sum":17,"target":9},
       "highlight": [0,3], "caption": "sum is 17, larger than the target 9" }
   ],
   "checkpoints": [
@@ -70,6 +71,10 @@ Rules:
 - `hints` are prose. No code fences, no identifiers-as-answer. Validated.
 - `steps` is a literal recorded trace, not a program. The solution never ships.
 - `checkpoints[].afterStep` indexes into `steps`.
+- A step names its pointers explicitly: `pointers` are indices into `array` and
+  render as arrows; `vars` are the scalars the caption talks about and render as
+  the readout. The renderer never guesses which is which.
+- The caption is rendered as HTML below the SVG by `app.js`, so it wraps.
 
 ## Authoring flow
 
@@ -107,8 +112,9 @@ message), infinite loop (timeout).
 ## Testing
 
 `tools/validate.py` asserts, for every `problems/*.json`: required keys present;
-`steps` non-empty; every `checkpoints[].afterStep` within `steps` range; every
-`answer` present in its `options`; `tests` non-empty; no fenced code or `def ` in
+`steps`, `tests`, `hints` and `checkpoints` non-empty; every `pointers` value a
+valid index into that step's `array`; every `checkpoints[].afterStep` within `steps` range; every
+`answer` present in its `options`; no fenced code or `def ` in
 any hint. Run it after any content edit.
 
 ## V1 content

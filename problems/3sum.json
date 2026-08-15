@@ -1,7 +1,7 @@
 {
   "id": "3sum",
   "title": "3Sum",
-  "statement": "Given an integer array `nums`, return all the triplets `[nums[i], nums[j], nums[k]]` such that `i != j`, `i != k`, `j != k`, and `nums[i] + nums[j] + nums[k] == 0`.\n\nThe solution set must not contain duplicate triplets.",
+  "statement": "Given an integer array `nums`, return all the triplets `[nums[i], nums[j], nums[k]]` such that `i != j`, `i != k`, `j != k`, and `nums[i] + nums[j] + nums[k] == 0`.\n\nThe solution set must not contain duplicate triplets.\n\nReturn the triplets in a fixed order so the answer is unambiguous: each triplet's own three numbers in ascending order, and the outer list of triplets in ascending order too (compared element by element).",
   "examples": [
     {
       "input": "nums = [-1,0,1,2,-1,-4]",
@@ -24,10 +24,13 @@
         1,
         2
       ],
-      "vars": {
+      "pointers": {
         "i": 0,
         "l": 1,
         "r": 5
+      },
+      "vars": {
+        "found": 0
       },
       "highlight": [
         0,
@@ -45,10 +48,14 @@
         1,
         2
       ],
-      "vars": {
+      "pointers": {
         "i": 0,
         "l": 2,
         "r": 5
+      },
+      "vars": {
+        "total": -3,
+        "found": 0
       },
       "highlight": [
         0,
@@ -66,10 +73,14 @@
         1,
         2
       ],
-      "vars": {
+      "pointers": {
         "i": 0,
         "l": 3,
         "r": 5
+      },
+      "vars": {
+        "total": -3,
+        "found": 0
       },
       "highlight": [
         0,
@@ -87,10 +98,14 @@
         1,
         2
       ],
-      "vars": {
+      "pointers": {
         "i": 0,
         "l": 4,
         "r": 5
+      },
+      "vars": {
+        "total": -2,
+        "found": 0
       },
       "highlight": [
         0,
@@ -108,10 +123,14 @@
         1,
         2
       ],
-      "vars": {
+      "pointers": {
         "i": 0,
         "l": 5,
         "r": 5
+      },
+      "vars": {
+        "total": -1,
+        "found": 0
       },
       "highlight": [
         0,
@@ -129,10 +148,13 @@
         1,
         2
       ],
-      "vars": {
+      "pointers": {
         "i": 1,
         "l": 2,
         "r": 5
+      },
+      "vars": {
+        "found": 0
       },
       "highlight": [
         1,
@@ -150,10 +172,14 @@
         1,
         2
       ],
-      "vars": {
+      "pointers": {
         "i": 1,
         "l": 2,
         "r": 5
+      },
+      "vars": {
+        "total": 0,
+        "found": 1
       },
       "highlight": [
         1,
@@ -171,10 +197,14 @@
         1,
         2
       ],
-      "vars": {
+      "pointers": {
         "i": 1,
         "l": 3,
         "r": 4
+      },
+      "vars": {
+        "total": 0,
+        "found": 1
       },
       "highlight": [
         1,
@@ -192,10 +222,14 @@
         1,
         2
       ],
-      "vars": {
+      "pointers": {
         "i": 1,
         "l": 3,
         "r": 4
+      },
+      "vars": {
+        "total": 0,
+        "found": 2
       },
       "highlight": [
         1,
@@ -213,8 +247,11 @@
         1,
         2
       ],
-      "vars": {
+      "pointers": {
         "i": 2
+      },
+      "vars": {
+        "found": 2
       },
       "highlight": [
         2
@@ -230,10 +267,13 @@
         1,
         2
       ],
-      "vars": {
+      "pointers": {
         "i": 3,
         "l": 4,
         "r": 5
+      },
+      "vars": {
+        "found": 2
       },
       "highlight": [
         3,
@@ -251,10 +291,14 @@
         1,
         2
       ],
-      "vars": {
+      "pointers": {
         "i": 3,
         "l": 4,
         "r": 4
+      },
+      "vars": {
+        "total": 3,
+        "found": 2
       },
       "highlight": [
         3,
@@ -272,8 +316,11 @@
         1,
         2
       ],
-      "vars": {
+      "pointers": {
         "i": 4
+      },
+      "vars": {
+        "found": 2
       },
       "highlight": [
         4
@@ -286,21 +333,23 @@
       "afterStep": 4,
       "question": "The total is still negative and l has caught up to r. What happens next?",
       "options": [
-        "Keep shrinking r past l",
-        "Stop this pass \u2014 there's no room left between the markers \u2014 and move to the next fixed number"
+        "Move r one more step left so the two markers can swap sides and finish the stretch",
+        "Move l one more step right, since the total is negative and needs a bigger number",
+        "Stop this pass \u2014 no room is left between the markers \u2014 and move to the next fixed number"
       ],
-      "answer": "Stop this pass \u2014 there's no room left between the markers \u2014 and move to the next fixed number",
-      "why": "Once the markers meet, there are no more pairs left to try for this fixed number, so the sweep moves on to the next one."
+      "answer": "Stop this pass \u2014 no room is left between the markers \u2014 and move to the next fixed number",
+      "why": "The markers have to bracket a pair. Once they meet there is nothing between them, so neither moving l nor moving r can produce a new pair for this fixed number; the sweep moves on."
     },
     {
       "afterStep": 6,
       "question": "The total is exactly zero. What should happen to the markers?",
       "options": [
-        "Stop entirely \u2014 this is the only triple",
-        "Record the triple, then move both markers inward to keep looking"
+        "Move only l inward, since the triple is already recorded and r still bounds the stretch",
+        "Move both markers inward, past any repeats, and keep sweeping this fixed number",
+        "Leave the markers and advance the fixed number, since a hit ends this stretch"
       ],
-      "answer": "Record the triple, then move both markers inward to keep looking",
-      "why": "One zero-sum triple doesn't rule out others. Recording it and continuing to sweep inward can turn up more."
+      "answer": "Move both markers inward, past any repeats, and keep sweeping this fixed number",
+      "why": "With the sum already at zero, moving only one marker can only overshoot in one direction, and this fixed number may still bracket other pairs \u2014 so move both inward and continue rather than abandoning the stretch."
     },
     {
       "afterStep": 8,

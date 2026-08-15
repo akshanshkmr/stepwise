@@ -30,9 +30,14 @@
         2,
         1
       ],
-      "vars": {
+      "pointers": {
         "l": 0,
         "r": 11
+      },
+      "vars": {
+        "left_max": 0,
+        "right_max": 0,
+        "water": 0
       },
       "highlight": [
         0,
@@ -55,15 +60,20 @@
         2,
         1
       ],
-      "vars": {
+      "pointers": {
         "l": 0,
         "r": 11
+      },
+      "vars": {
+        "left_max": 0,
+        "right_max": 0,
+        "water": 0
       },
       "highlight": [
         0,
         11
       ],
-      "caption": "height[l]=0 is a new tallest-from-the-left wall (0); nothing traps here."
+      "caption": "height[l]=0 matches the tallest-from-the-left wall so far (0); nothing traps here."
     },
     {
       "array": [
@@ -80,9 +90,14 @@
         2,
         1
       ],
-      "vars": {
+      "pointers": {
         "l": 1,
         "r": 11
+      },
+      "vars": {
+        "left_max": 0,
+        "right_max": 0,
+        "water": 0
       },
       "highlight": [
         1,
@@ -105,9 +120,14 @@
         2,
         1
       ],
-      "vars": {
+      "pointers": {
         "l": 1,
         "r": 11
+      },
+      "vars": {
+        "left_max": 0,
+        "right_max": 1,
+        "water": 0
       },
       "highlight": [
         1,
@@ -130,9 +150,14 @@
         2,
         1
       ],
-      "vars": {
+      "pointers": {
         "l": 1,
         "r": 10
+      },
+      "vars": {
+        "left_max": 0,
+        "right_max": 1,
+        "water": 0
       },
       "highlight": [
         1,
@@ -155,9 +180,14 @@
         2,
         1
       ],
-      "vars": {
+      "pointers": {
         "l": 1,
         "r": 10
+      },
+      "vars": {
+        "left_max": 1,
+        "right_max": 1,
+        "water": 0
       },
       "highlight": [
         1,
@@ -180,9 +210,14 @@
         2,
         1
       ],
-      "vars": {
+      "pointers": {
         "l": 2,
         "r": 10
+      },
+      "vars": {
+        "left_max": 1,
+        "right_max": 1,
+        "water": 0
       },
       "highlight": [
         2,
@@ -205,9 +240,14 @@
         2,
         1
       ],
-      "vars": {
+      "pointers": {
         "l": 2,
         "r": 10
+      },
+      "vars": {
+        "left_max": 1,
+        "right_max": 1,
+        "water": 1
       },
       "highlight": [
         2,
@@ -230,9 +270,14 @@
         2,
         1
       ],
-      "vars": {
+      "pointers": {
         "l": 3,
         "r": 10
+      },
+      "vars": {
+        "left_max": 1,
+        "right_max": 1,
+        "water": 1
       },
       "highlight": [
         3,
@@ -255,9 +300,14 @@
         2,
         1
       ],
-      "vars": {
+      "pointers": {
         "l": 3,
         "r": 10
+      },
+      "vars": {
+        "left_max": 1,
+        "right_max": 2,
+        "water": 1
       },
       "highlight": [
         3,
@@ -280,9 +330,14 @@
         2,
         1
       ],
-      "vars": {
+      "pointers": {
         "l": 3,
         "r": 9
+      },
+      "vars": {
+        "left_max": 1,
+        "right_max": 2,
+        "water": 1
       },
       "highlight": [
         3,
@@ -305,9 +360,14 @@
         2,
         1
       ],
-      "vars": {
+      "pointers": {
         "l": 3,
         "r": 9
+      },
+      "vars": {
+        "left_max": 1,
+        "right_max": 2,
+        "water": 2
       },
       "highlight": [
         3,
@@ -330,9 +390,14 @@
         2,
         1
       ],
-      "vars": {
+      "pointers": {
         "l": 3,
         "r": 8
+      },
+      "vars": {
+        "left_max": 1,
+        "right_max": 2,
+        "water": 2
       },
       "highlight": [
         3,
@@ -355,15 +420,20 @@
         2,
         1
       ],
-      "vars": {
+      "pointers": {
         "l": 3,
         "r": 8
+      },
+      "vars": {
+        "left_max": 1,
+        "right_max": 2,
+        "water": 2
       },
       "highlight": [
         3,
         8
       ],
-      "caption": "height[r]=2 is a new tallest-from-the-right wall (2); nothing traps here."
+      "caption": "height[r]=2 matches the tallest-from-the-right wall so far (2); nothing traps here."
     },
     {
       "array": [
@@ -380,9 +450,14 @@
         2,
         1
       ],
-      "vars": {
+      "pointers": {
         "l": 3,
         "r": 7
+      },
+      "vars": {
+        "left_max": 1,
+        "right_max": 2,
+        "water": 2
       },
       "highlight": [
         3,
@@ -405,9 +480,14 @@
         2,
         1
       ],
-      "vars": {
+      "pointers": {
         "l": 3,
         "r": 7
+      },
+      "vars": {
+        "left_max": 2,
+        "right_max": 2,
+        "water": 2
       },
       "highlight": [
         3,
@@ -430,9 +510,14 @@
         2,
         1
       ],
-      "vars": {
+      "pointers": {
         "l": 4,
         "r": 7
+      },
+      "vars": {
+        "left_max": 2,
+        "right_max": 2,
+        "water": 2
       },
       "highlight": [
         4,
@@ -455,9 +540,14 @@
         2,
         1
       ],
-      "vars": {
+      "pointers": {
         "l": 4,
         "r": 7
+      },
+      "vars": {
+        "left_max": 2,
+        "right_max": 2,
+        "water": 3
       },
       "highlight": [
         4,
@@ -480,9 +570,14 @@
         2,
         1
       ],
-      "vars": {
+      "pointers": {
         "l": 5,
         "r": 7
+      },
+      "vars": {
+        "left_max": 2,
+        "right_max": 2,
+        "water": 3
       },
       "highlight": [
         5,
@@ -505,9 +600,14 @@
         2,
         1
       ],
-      "vars": {
+      "pointers": {
         "l": 5,
         "r": 7
+      },
+      "vars": {
+        "left_max": 2,
+        "right_max": 2,
+        "water": 5
       },
       "highlight": [
         5,
@@ -530,9 +630,14 @@
         2,
         1
       ],
-      "vars": {
+      "pointers": {
         "l": 6,
         "r": 7
+      },
+      "vars": {
+        "left_max": 2,
+        "right_max": 2,
+        "water": 5
       },
       "highlight": [
         6,
@@ -555,9 +660,14 @@
         2,
         1
       ],
-      "vars": {
+      "pointers": {
         "l": 6,
         "r": 7
+      },
+      "vars": {
+        "left_max": 2,
+        "right_max": 2,
+        "water": 6
       },
       "highlight": [
         6,
@@ -580,9 +690,14 @@
         2,
         1
       ],
-      "vars": {
+      "pointers": {
         "l": 7,
         "r": 7
+      },
+      "vars": {
+        "left_max": 2,
+        "right_max": 2,
+        "water": 6
       },
       "highlight": [
         7,
@@ -605,9 +720,14 @@
         2,
         1
       ],
-      "vars": {
+      "pointers": {
         "l": 7,
         "r": 7
+      },
+      "vars": {
+        "left_max": 2,
+        "right_max": 2,
+        "water": 6
       },
       "highlight": [
         7,

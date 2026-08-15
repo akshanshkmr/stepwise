@@ -32,4 +32,5 @@ files at startup, so `file://` won't work.
 python3 -m pytest tools/ -v && python3 tools/validate.py
 ```
 
-Browser checks: open `/test-visualizer.html` and `/test-runner.html`; every line must say PASS.
+Browser checks: open `/dev/test-visualizer.html` and `/dev/test-runner.html`; every line must say PASS.
+(The `dev/` harnesses hold reference solutions — they are not part of the app.)

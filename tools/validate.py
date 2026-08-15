@@ -25,9 +25,11 @@ def validate_problem(p):
         errors.append("tests must not be empty")
     if not p["hints"]:
         errors.append("hints must not be empty")
+    if not p["checkpoints"]:
+        errors.append("checkpoints must not be empty")
 
     for i, step in enumerate(p["steps"]):
-        for key in ("array", "vars", "highlight", "caption"):
+        for key in ("array", "pointers", "vars", "highlight", "caption"):
             if key not in step:
                 errors.append(f"steps[{i}] missing key: {key}")
                 break
@@ -36,6 +38,9 @@ def validate_problem(p):
             for h in step["highlight"]:
                 if not isinstance(h, int) or not 0 <= h < n:
                     errors.append(f"steps[{i}] highlight index {h} outside array of length {n}")
+            for name, v in step["pointers"].items():
+                if not isinstance(v, int) or isinstance(v, bool) or not 0 <= v < n:
+                    errors.append(f"steps[{i}] pointer {name!r}={v} is not an index into an array of length {n}")
 
     for i, cp in enumerate(p["checkpoints"]):
         for key in ("afterStep", "question", "options", "answer", "why"):

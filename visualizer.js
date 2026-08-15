@@ -10,18 +10,17 @@ function el(tag, attrs, text) {
 
 const cellX = (i) => LEFT + i * (BOX + GAP);
 
+/** Draws one step. `pointers` are arrows, `vars` are the readout — no guessing.
+ *  The caption is NOT drawn here: app.js renders it as HTML so it wraps. */
 export function render(svg, step) {
   svg.replaceChildren();
-  const { array, vars, highlight, caption } = step;
+  const { array, pointers, vars, highlight } = step;
   const hl = new Set(highlight);
 
   const width = LEFT * 2 + array.length * (BOX + GAP);
-  svg.setAttribute("viewBox", `0 0 ${Math.max(width, 480)} 260`);
+  svg.setAttribute("viewBox", `0 0 ${Math.max(width, 480)} 220`);
 
-  // Non-index vars, shown as a readout above the row.
-  const isIndex = (v) => Number.isInteger(v) && v >= 0 && v < array.length;
-  const readout = Object.entries(vars)
-    .filter(([, v]) => !isIndex(v))
+  const readout = Object.entries(vars ?? {})
     .map(([k, v]) => `${k} = ${v}`)
     .join("   ");
   const readoutNode = el("text", { class: "readout", x: LEFT, y: 34 }, readout);
@@ -43,7 +42,7 @@ export function render(svg, step) {
 
   // Pointers, stacked so two on the same index stay readable.
   const perIndex = new Map();
-  Object.entries(vars).filter(([, v]) => isIndex(v)).forEach(([name, i]) => {
+  Object.entries(pointers ?? {}).forEach(([name, i]) => {
     const row = perIndex.get(i) ?? 0;
     perIndex.set(i, row + 1);
     const y = TOP + BOX + 26 + row * 26;
@@ -54,8 +53,4 @@ export function render(svg, step) {
     }, `▲ ${name}`));
     svg.appendChild(g);
   });
-
-  svg.appendChild(el("text", {
-    class: "caption", x: LEFT, y: 244,
-  }, caption ?? ""));
 }

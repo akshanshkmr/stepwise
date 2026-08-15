@@ -14,13 +14,13 @@ export function nextBlockingCheckpoint(checkpoints, answered, index) {
 if (document.getElementById("viz")) {
 
 const $ = (id) => document.getElementById(id);
-let problem = null, index = 0, answered = new Set(), hintsUsed = 0;
+let problem = null, index = 0, answered = new Set(), hintsUsed = 0, code = "";
 
 const storageKey = () => `codeteach:${problem.id}`;
 
 function save() {
   localStorage.setItem(storageKey(),
-    JSON.stringify({ answered: [...answered], hintsUsed }));
+    JSON.stringify({ answered: [...answered], hintsUsed, code: $("editor").value }));
 }
 
 function load() {
@@ -28,11 +28,20 @@ function load() {
     const raw = JSON.parse(localStorage.getItem(storageKey()) ?? "{}");
     answered = new Set(raw.answered ?? []);
     hintsUsed = raw.hintsUsed ?? 0;
-  } catch { answered = new Set(); hintsUsed = 0; }
+    code = raw.code ?? "";
+  } catch { answered = new Set(); hintsUsed = 0; code = ""; }
 }
 
 async function loadProblem(id) {
-  problem = await (await fetch(`problems/${id}.json`)).json();
+  try {
+    const res = await fetch(`problems/${id}.json`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    problem = await res.json();
+  } catch (err) {
+    $("caption").textContent =
+      `Could not load the problem "${id}" (${err.message}). Serve this app over http:// and reload the page.`;
+    return;
+  }
   index = 0;
   load();
   $("title").textContent = problem.title;
@@ -40,7 +49,7 @@ async function loadProblem(id) {
     .split("\n\n").map(p => `<p>${inline(p)}</p>`).join("");
   $("examples").innerHTML = problem.examples
     .map(e => `<div>Input: ${e.input}<br>Output: ${e.output}</div>`).join("");
-  $("editor").value = `${problem.signature}\n    `;
+  $("editor").value = code || `${problem.signature}\n    `;
   $("scrub").max = String(problem.steps.length - 1);
   $("results").replaceChildren();
   renderHints();
@@ -62,6 +71,7 @@ function renderHints() {
 
 function draw() {
   render($("viz"), problem.steps[index]);
+  $("caption").textContent = problem.steps[index].caption ?? "";
   $("step-count").textContent = `${index + 1} / ${problem.steps.length}`;
   $("scrub").value = String(index);
 
@@ -117,14 +127,19 @@ $("first").onclick = () => go(0);
 $("last").onclick = () => go(problem.steps.length - 1);
 $("scrub").oninput = (e) => go(Number(e.target.value));
 $("hint-btn").onclick = () => { hintsUsed++; save(); renderHints(); };
+$("editor").oninput = () => save();
 
 $("run").onclick = async () => {
   const btn = $("run");
+  const ran = problem; // results belong to this problem only
+  const src = $("editor").value;
+  const stale = () => problem !== ran;
   btn.disabled = true;
   $("results").textContent = "Starting Python…";
   try {
-    await ready((msg) => { $("results").textContent = msg; });
-    const results = await run($("editor").value, problem.func, problem.tests);
+    await ready((msg) => { if (!stale()) $("results").textContent = msg; });
+    const results = await run(src, ran.func, ran.tests);
+    if (stale()) return;
     $("results").replaceChildren(...results.map(r => {
       const div = document.createElement("div");
       div.className = "result " + (r.pass ? "pass" : "fail");
@@ -138,7 +153,7 @@ $("run").onclick = async () => {
       return div;
     }));
   } catch (err) {
-    $("results").textContent = `${err.message} — check your connection and press Run again.`;
+    if (!stale()) $("results").textContent = `${err.message} — check your connection and press Run again.`;
   } finally {
     btn.disabled = false;
   }

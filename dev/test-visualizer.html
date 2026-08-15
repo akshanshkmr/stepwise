@@ -4,7 +4,7 @@
 <svg id="s" viewBox="0 0 800 220"></svg>
 <pre id="out"></pre>
 <script type="module">
-import { render } from "./visualizer.js";
+import { render } from "../visualizer.js";
 
 const svg = document.getElementById("s");
 const results = [];
@@ -16,7 +16,8 @@ const assert = (cond, msg) => { if (!cond) throw new Error(msg); };
 
 const step = {
   array: [2, 7, 11, 15],
-  vars: { l: 0, r: 3, sum: 17, target: 9 },
+  pointers: { l: 0, r: 3 },
+  vars: { sum: 17, target: 9 },
   highlight: [0, 3],
   caption: "sum is 17",
 };
@@ -32,32 +33,47 @@ check("highlights only the highlighted indices", () => {
   assert(JSON.stringify(hl) === "[0,3]", "got " + JSON.stringify(hl));
 });
 
-check("draws a pointer for each index-valued var", () => {
+check("draws a pointer for each entry in pointers", () => {
   render(svg, step);
   const names = [...svg.querySelectorAll(".pointer")].map(e => e.dataset.name).sort();
   assert(JSON.stringify(names) === '["l","r"]', "got " + JSON.stringify(names));
 });
 
-check("non-index vars go to the readout, not the pointers", () => {
+check("vars go to the readout, not the pointers", () => {
   render(svg, step);
   const readout = svg.querySelector(".readout").textContent;
   assert(readout.includes("sum = 17"), "readout missing sum: " + readout);
   assert(readout.includes("target = 9"), "readout missing target: " + readout);
 });
 
+check("an index-valued var stays in the readout and draws no arrow", () => {
+  render(svg, { array: [5, 6, 7], pointers: { i: 2 }, vars: { found: 1, total: 0 },
+                highlight: [2], caption: "no guessing" });
+  const readout = svg.querySelector(".readout").textContent;
+  assert(readout.includes("found = 1"), "readout missing found: " + readout);
+  assert(readout.includes("total = 0"), "readout missing total: " + readout);
+  const names = [...svg.querySelectorAll(".pointer")].map(e => e.dataset.name);
+  assert(JSON.stringify(names) === '["i"]', "only pointers become arrows, got " + JSON.stringify(names));
+});
+
+check("the caption is not drawn inside the svg", () => {
+  render(svg, step);
+  assert(svg.textContent.indexOf("sum is 17") === -1, "caption leaked into the svg");
+});
+
 check("re-render clears the previous frame", () => {
   render(svg, step);
-  render(svg, { array: [1, 2], vars: { l: 0 }, highlight: [], caption: "x" });
+  render(svg, { array: [1, 2], pointers: { l: 0 }, vars: {}, highlight: [], caption: "x" });
   assert(svg.querySelectorAll(".cell").length === 2, "stale cells left behind");
   assert(svg.querySelectorAll(".pointer").length === 1, "stale pointers left behind");
 });
 
 check("two pointers on the same index both render", () => {
-  render(svg, { array: [1, 2, 3], vars: { l: 1, r: 1 }, highlight: [1], caption: "meet" });
+  render(svg, { array: [1, 2, 3], pointers: { l: 1, r: 1 }, vars: {}, highlight: [1], caption: "meet" });
   assert(svg.querySelectorAll(".pointer").length === 2, "expected 2 pointers");
 });
 
-import { nextBlockingCheckpoint } from "./app.js";
+import { nextBlockingCheckpoint } from "../app.js";
 
 check("no checkpoint means no block", () => {
   assert(nextBlockingCheckpoint([], new Set(), 0) === null, "should not block");

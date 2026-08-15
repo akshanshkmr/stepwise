@@ -27,9 +27,12 @@
         3,
         7
       ],
-      "vars": {
+      "pointers": {
         "l": 0,
         "r": 8
+      },
+      "vars": {
+        "best": 0
       },
       "highlight": [
         0,
@@ -49,9 +52,13 @@
         3,
         7
       ],
-      "vars": {
+      "pointers": {
         "l": 0,
         "r": 8
+      },
+      "vars": {
+        "area": 8,
+        "best": 8
       },
       "highlight": [
         0,
@@ -71,9 +78,12 @@
         3,
         7
       ],
-      "vars": {
+      "pointers": {
         "l": 1,
         "r": 8
+      },
+      "vars": {
+        "best": 8
       },
       "highlight": [
         1,
@@ -93,9 +103,13 @@
         3,
         7
       ],
-      "vars": {
+      "pointers": {
         "l": 1,
         "r": 8
+      },
+      "vars": {
+        "area": 49,
+        "best": 49
       },
       "highlight": [
         1,
@@ -115,9 +129,12 @@
         3,
         7
       ],
-      "vars": {
+      "pointers": {
         "l": 1,
         "r": 7
+      },
+      "vars": {
+        "best": 49
       },
       "highlight": [
         1,
@@ -137,9 +154,13 @@
         3,
         7
       ],
-      "vars": {
+      "pointers": {
         "l": 1,
         "r": 7
+      },
+      "vars": {
+        "area": 18,
+        "best": 49
       },
       "highlight": [
         1,
@@ -159,9 +180,12 @@
         3,
         7
       ],
-      "vars": {
+      "pointers": {
         "l": 1,
         "r": 6
+      },
+      "vars": {
+        "best": 49
       },
       "highlight": [
         1,
@@ -181,9 +205,13 @@
         3,
         7
       ],
-      "vars": {
+      "pointers": {
         "l": 1,
         "r": 6
+      },
+      "vars": {
+        "area": 40,
+        "best": 49
       },
       "highlight": [
         1,
@@ -203,9 +231,12 @@
         3,
         7
       ],
-      "vars": {
+      "pointers": {
         "l": 2,
         "r": 6
+      },
+      "vars": {
+        "best": 49
       },
       "highlight": [
         2,
@@ -225,9 +256,13 @@
         3,
         7
       ],
-      "vars": {
+      "pointers": {
         "l": 2,
         "r": 6
+      },
+      "vars": {
+        "area": 24,
+        "best": 49
       },
       "highlight": [
         2,
@@ -247,9 +282,12 @@
         3,
         7
       ],
-      "vars": {
+      "pointers": {
         "l": 3,
         "r": 6
+      },
+      "vars": {
+        "best": 49
       },
       "highlight": [
         3,
@@ -269,9 +307,13 @@
         3,
         7
       ],
-      "vars": {
+      "pointers": {
         "l": 3,
         "r": 6
+      },
+      "vars": {
+        "area": 6,
+        "best": 49
       },
       "highlight": [
         3,
@@ -291,9 +333,12 @@
         3,
         7
       ],
-      "vars": {
+      "pointers": {
         "l": 4,
         "r": 6
+      },
+      "vars": {
+        "best": 49
       },
       "highlight": [
         4,
@@ -313,9 +358,13 @@
         3,
         7
       ],
-      "vars": {
+      "pointers": {
         "l": 4,
         "r": 6
+      },
+      "vars": {
+        "area": 10,
+        "best": 49
       },
       "highlight": [
         4,
@@ -335,9 +384,12 @@
         3,
         7
       ],
-      "vars": {
+      "pointers": {
         "l": 5,
         "r": 6
+      },
+      "vars": {
+        "best": 49
       },
       "highlight": [
         5,
@@ -357,9 +409,13 @@
         3,
         7
       ],
-      "vars": {
+      "pointers": {
         "l": 5,
         "r": 6
+      },
+      "vars": {
+        "area": 4,
+        "best": 49
       },
       "highlight": [
         5,
@@ -379,9 +435,12 @@
         3,
         7
       ],
-      "vars": {
+      "pointers": {
         "l": 6,
         "r": 6
+      },
+      "vars": {
+        "best": 49
       },
       "highlight": [
         6,
@@ -401,9 +460,12 @@
         3,
         7
       ],
-      "vars": {
+      "pointers": {
         "l": 6,
         "r": 6
+      },
+      "vars": {
+        "best": 49
       },
       "highlight": [
         6,

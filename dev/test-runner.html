@@ -3,7 +3,7 @@
 <title>runner self-check</title>
 <pre id="out">loading pyodide…</pre>
 <script type="module">
-import { ready, run } from "./runner.js";
+import { ready, run } from "../runner.js";
 
 const results = [];
 const check = async (name, fn) => {
@@ -37,6 +37,19 @@ await check("correct solution passes every case", async () => {
   const res = await run(CORRECT, "two_sum", TESTS);
   assert(res.length === 2, "expected 2 results");
   assert(res.every(r => r.pass), JSON.stringify(res));
+});
+
+await check("a tuple return compares equal to a list expectation", async () => {
+  const res = await run(
+    "def two_sum(numbers, target):\n    return (1, 2) if target == 9 else (1, 3)\n",
+    "two_sum", TESTS);
+  assert(res.every(r => r.pass), "tuples should normalize to lists: " + JSON.stringify(res));
+});
+
+await check("nested tuples normalize too", async () => {
+  const res = await run("def f(x):\n    return [(1, 2), (3, 4)]\n", "f",
+    [{ args: [0], expect: [[1, 2], [3, 4]] }]);
+  assert(res[0].pass, "nested tuples should normalize: " + JSON.stringify(res[0]));
 });
 
 await check("wrong answer is reported, not thrown", async () => {

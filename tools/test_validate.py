@@ -10,8 +10,10 @@ GOOD = {
     "signature": "def two_sum(numbers, target):",
     "func": "two_sum",
     "steps": [
-        {"array": [2, 7, 11, 15], "vars": {"l": 0, "r": 3}, "highlight": [0, 3], "caption": "start"},
-        {"array": [2, 7, 11, 15], "vars": {"l": 0, "r": 2}, "highlight": [0, 2], "caption": "shrink"},
+        {"array": [2, 7, 11, 15], "pointers": {"l": 0, "r": 3}, "vars": {"sum": 17},
+         "highlight": [0, 3], "caption": "start"},
+        {"array": [2, 7, 11, 15], "pointers": {"l": 0, "r": 2}, "vars": {"sum": 13},
+         "highlight": [0, 2], "caption": "shrink"},
     ],
     "checkpoints": [
         {"afterStep": 0, "question": "Which pointer moves?", "options": ["left", "right"],
@@ -67,3 +69,22 @@ def test_highlight_index_out_of_array_reported():
     p = copy.deepcopy(GOOD)
     p["steps"][0]["highlight"] = [99]
     assert any("highlight" in e for e in validate_problem(p))
+
+
+def test_missing_pointers_key_reported():
+    p = copy.deepcopy(GOOD)
+    del p["steps"][0]["pointers"]
+    assert any("pointers" in e for e in validate_problem(p))
+
+
+@pytest.mark.parametrize("bad", [9, -1, "0", True])
+def test_pointer_outside_array_reported(bad):
+    p = copy.deepcopy(GOOD)
+    p["steps"][0]["pointers"]["l"] = bad
+    assert any("pointer" in e for e in validate_problem(p))
+
+
+def test_empty_checkpoints_reported():
+    p = copy.deepcopy(GOOD)
+    p["checkpoints"] = []
+    assert any("checkpoints" in e for e in validate_problem(p))
