@@ -37,7 +37,8 @@ and turns them into animation frames.
    decisions, via `CAPTIONS[<id>][<frame index>]`. This is the teaching, and it
    is the one part no tool can do: the tracer sees `r -= 1`, not *why*.
 5. Add 2–3 `CHECKPOINTS` entries at the moments where the naive guess is wrong.
-6. `python3 tools/validate.py`, then add the id to `PROBLEMS` in `app.js`.
+6. `python3 tools/validate.py`. Nothing to register: `record.py` rebuilds
+   `problems/index.json` and the sidebar picks the problem up on reload.
 
 `move-zeroes` is the worked example of this path. The five older problems use
 the hand-written `trace_<name>(rec)` route instead, which is still supported and
