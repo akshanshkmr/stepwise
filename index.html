@@ -25,6 +25,10 @@
   </section>
 
   <section class="pane" id="viz-pane">
+    <div id="mine-bar" hidden>
+      <span>Showing <strong>your run</strong> — checkpoints are off here.</span>
+      <button id="mine-back" class="ghost">Back to the walkthrough</button>
+    </div>
     <svg id="viz" viewBox="0 0 800 220" role="img" aria-label="Algorithm animation"></svg>
     <p id="caption" role="status"></p>
     <div id="checkpoint" hidden>
@@ -50,6 +54,7 @@
                 autocorrect="off" autocomplete="off" wrap="off"></textarea>
     </div>
     <button id="run">Run tests</button>
+    <button id="viz-mine" class="ghost">Visualize my run</button>
     <div id="results"></div>
   </section>
 </main>

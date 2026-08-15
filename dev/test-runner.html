@@ -3,7 +3,7 @@
 <title>runner self-check</title>
 <pre id="out">loading pyodide…</pre>
 <script type="module">
-import { ready, run } from "../runner.js";
+import { ready, run, trace } from "../runner.js";
 
 const results = [];
 const check = async (name, fn) => {
@@ -96,4 +96,29 @@ await check("timeout survives a broad except inside the loop", async () => {
   const res = await run("def two_sum(numbers, target):\n    while True:\n        try:\n            pass\n        except Exception:\n            pass\n", "two_sum", TESTS);
   assert(res[0].error && res[0].error.includes("timed out"), "got " + res[0].error);
 });
+
+await check("trace turns uninstrumented code into frames", async () => {
+  const out = await trace(CORRECT, "two_sum", [[2, 7, 11, 15], 9]);
+  assert(out.error === null, "unexpected error: " + out.error);
+  assert(out.steps.length > 3, "expected several frames, got " + out.steps.length);
+  const f = out.steps[out.steps.length - 1];
+  assert("array" in f && "pointers" in f && "vars" in f && "highlight" in f,
+         "frame is not in step shape: " + JSON.stringify(f));
+  assert(JSON.stringify(out.result) === "[1,2]", "wrong result: " + JSON.stringify(out.result));
+});
+
+await check("trace reports a crash instead of throwing, keeping earlier frames", async () => {
+  const out = await trace(
+    "def two_sum(numbers, target):\n    l = 0\n    l = 1\n    raise ValueError('boom')\n",
+    "two_sum", [[2, 7, 11, 15], 9]);
+  assert(out.error && out.error.includes("ValueError"), "got " + out.error);
+  assert(out.steps.length > 0, "frames before the crash were lost");
+});
+
+await check("trace reports a missing function without throwing", async () => {
+  const out = await trace("x = 1\n", "two_sum", [[2, 7, 11, 15], 9]);
+  assert(out.error && out.error.includes("two_sum"), "got " + out.error);
+  assert(out.steps.length === 0, "should have no frames");
+});
+
 </script>

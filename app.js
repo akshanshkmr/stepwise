@@ -1,5 +1,5 @@
 import { render } from "./visualizer.js";
-import { ready, run } from "./runner.js";
+import { ready, run, trace } from "./runner.js";
 
 const PROBLEMS = ["valid-palindrome", "two-sum-ii", "container-with-most-water", "3sum", "trapping-rain-water"];
 
@@ -15,6 +15,8 @@ if (document.getElementById("viz")) {
 
 const $ = (id) => document.getElementById(id);
 let problem = null, index = 0, answered = new Set(), hintsUsed = 0, code = "";
+// Non-null while showing the learner's own traced run instead of the reference.
+let mine = null;
 
 const storageKey = () => `codeteach:${problem.id}`;
 
@@ -43,6 +45,7 @@ async function loadProblem(id) {
     return;
   }
   index = 0;
+  mine = null;
   load();
   $("title").textContent = problem.title;
   $("statement").innerHTML = problem.statement
@@ -71,13 +74,20 @@ function renderHints() {
 }
 
 function draw() {
-  render($("viz"), problem.steps[index], problem.view);
-  $("caption").textContent = problem.steps[index].caption ?? "";
-  $("step-count").textContent = `${index + 1} / ${problem.steps.length}`;
-  $("scrub").value = String(index);
+  // `mine` holds the learner's own traced run. The reference walkthrough in
+  // problem.steps is never overwritten — switching back is just dropping it.
+  const steps = mine ?? problem.steps;
+  const checkpoints = mine ? [] : problem.checkpoints;
 
-  const blocked = nextBlockingCheckpoint(problem.checkpoints, answered, index);
-  const atEnd = index >= problem.steps.length - 1;
+  render($("viz"), steps[index], problem.view);
+  $("caption").textContent = steps[index].caption ?? "";
+  $("step-count").textContent = `${index + 1} / ${steps.length}`;
+  $("scrub").max = String(steps.length - 1);
+  $("scrub").value = String(index);
+  $("mine-bar").hidden = !mine;
+
+  const blocked = nextBlockingCheckpoint(checkpoints, answered, index);
+  const atEnd = index >= steps.length - 1;
   $("next").disabled = blocked !== null || atEnd;
   $("last").disabled = blocked !== null || atEnd;
   $("scrub").disabled = blocked !== null;
@@ -111,10 +121,12 @@ function draw() {
 }
 
 function go(i) {
-  const target = Math.max(0, Math.min(problem.steps.length - 1, i));
+  const steps = mine ?? problem.steps;
+  const checkpoints = mine ? [] : problem.checkpoints;
+  const target = Math.max(0, Math.min(steps.length - 1, i));
   // Never step past an unanswered gate.
   for (let k = index; k < target; k++) {
-    if (nextBlockingCheckpoint(problem.checkpoints, answered, k) !== null) {
+    if (nextBlockingCheckpoint(checkpoints, answered, k) !== null) {
       index = k; draw(); return;
     }
   }
@@ -122,10 +134,16 @@ function go(i) {
   draw();
 }
 
+function showMine(steps) {
+  mine = steps;
+  index = 0;
+  draw();
+}
+
 $("next").onclick = () => go(index + 1);
 $("prev").onclick = () => go(index - 1);
 $("first").onclick = () => go(0);
-$("last").onclick = () => go(problem.steps.length - 1);
+$("last").onclick = () => go((mine ?? problem.steps).length - 1);
 $("scrub").oninput = (e) => go(Number(e.target.value));
 $("hint-btn").onclick = () => { hintsUsed++; save(); renderHints(); };
 $("editor").oninput = () => { save(); drawGutter(); };
@@ -176,6 +194,41 @@ $("editor").onkeydown = (e) => {
     let indent = line.match(/^ */)[0];
     if (line.trimEnd().endsWith(":")) indent += INDENT;
     replace("\n" + indent);
+  }
+};
+
+$("mine-back").onclick = () => { mine = null; index = 0; draw(); };
+
+$("viz-mine").onclick = async () => {
+  const btn = $("viz-mine");
+  const ran = problem;              // a trace belongs to the problem it came from
+  const src = $("editor").value;
+  const stale = () => problem !== ran;
+  const args = ran.tests[0].args;   // the first case is the one the examples show
+  btn.disabled = true;
+  $("results").textContent = "Tracing your code…";
+  try {
+    await ready((msg) => { if (!stale()) $("results").textContent = msg; });
+    const out = await trace(src, ran.func, args);
+    if (stale()) return;
+
+    if (!out.steps.length) {
+      $("results").textContent = out.error
+        ? `Could not trace your code: ${out.error}`
+        : `Your ${ran.func} ran without any state to watch — no loop variables changed.`;
+      return;
+    }
+    showMine(out.steps);
+
+    const notes = [`Traced your run on ${JSON.stringify(args)} — ${out.steps.length} frames.`];
+    if (out.error) notes.push(`It stopped early: ${out.error}`);
+    else notes.push(`It returned ${JSON.stringify(out.result)}.`);
+    if (out.truncated) notes.push("Only the first 400 frames were captured.");
+    $("results").textContent = notes.join(" ");
+  } catch (err) {
+    if (!stale()) $("results").textContent = `${err.message} — press the button again.`;
+  } finally {
+    btn.disabled = false;
   }
 };
 

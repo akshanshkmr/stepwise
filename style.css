@@ -92,7 +92,13 @@ button.ghost { background: transparent; color: var(--ink); border: 1px solid var
   resize: vertical; outline: none; white-space: pre; overflow: auto;
   tab-size: 4;
 }
-#run { margin-top: .6rem; }
+#run, #viz-mine { margin-top: .6rem; }
+#viz-mine { margin-left: .4rem; }
+#mine-bar {
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+  margin-bottom: .8rem; padding: .5rem .8rem; border-radius: 6px;
+  background: #14233a; border: 1px solid #2f6fb8; font-size: .88rem;
+}
 .result { border-left: 3px solid var(--line); padding: .5rem .7rem; margin-top: .6rem;
           font-size: .82rem; background: #0f1116; }
 .result.pass { border-color: var(--ok); }
