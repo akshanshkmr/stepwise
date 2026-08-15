@@ -9,8 +9,8 @@ writing the code yourself. The app never shows you a solution.
 python3 -m http.server 8000
 ```
 
-Open <http://localhost:8000>. A `file://` open works too, except "Run tests" —
-Pyodide needs an `http://` origin.
+Open <http://localhost:8000>. The app requires an `http://` origin—it fetches problem
+files at startup, so `file://` won't work.
 
 ## How it teaches
 
