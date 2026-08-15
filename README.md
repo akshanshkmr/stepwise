@@ -60,6 +60,13 @@ tree, graph) means adding `views/<name>.js` and an entry in
 `views/manifest.json` — the dispatcher, the app, the recorder and the validator
 all read that manifest and need no edit.
 
+## Progress
+
+Solving a problem (every test passing once) ticks it in the sidebar and advances
+its pattern's count and the bar at the bottom. Progress, revealed hints, answered
+checkpoints, your code, and which sections you collapsed all live in
+`localStorage` — there are no accounts and nothing leaves the browser.
+
 ## Checks
 
 ```bash

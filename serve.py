@@ -12,10 +12,17 @@ import posixpath
 
 PORT = 8000
 
-# Exact files and directories that make up the running app. Anything else
-# under the repo root is 404, even if it exists on disk.
+# What the running app is made of. Everything the browser loads is either a
+# front-end file sitting directly in the repo root, or lives in one of the
+# app's own directories. Solutions live in tools/ and dev/, which are
+# directories and therefore never match.
+#
+# This used to be a hand-listed set of filenames, and three separate features
+# shipped broken because a new file was not added to it. The rule is now
+# structural: adding app.js's next neighbour needs no edit here.
+ALLOWED_ROOT_SUFFIXES = (".html", ".js", ".css")
 ALLOWED_FILES = {
-    "/", "/index.html", "/app.js", "/visualizer.js", "/runner.js", "/style.css",
+    "/",
     # The tracer, not a solution: it animates whatever function it is handed.
     "/tracer.py",
 }
@@ -27,9 +34,14 @@ class AppOnlyHandler(http.server.SimpleHTTPRequestHandler):
         path = posixpath.normpath(path)
         if path == ".":
             path = "/"
+        if ".." in path:
+            return False
         if path in ALLOWED_FILES:
             return True
-        return any(path.startswith(d) for d in ALLOWED_DIRS) and ".." not in path
+        # A root-level front-end file: exactly one slash, known suffix.
+        if path.count("/") == 1 and path.endswith(ALLOWED_ROOT_SUFFIXES):
+            return True
+        return any(path.startswith(d) for d in ALLOWED_DIRS)
 
     def send_head(self):
         if not self._allowed(self.path.split("?", 1)[0]):

@@ -5,6 +5,7 @@
 <pre id="out"></pre>
 <script type="module">
 import { render } from "../visualizer.js";
+import { pythonToHtml } from "../highlight.js";
 
 const svg = document.getElementById("s");
 const results = [];
@@ -130,6 +131,47 @@ check("switching view clears the previous view's marks", () => {
 check("an unknown view reports itself instead of drawing nothing", () => {
   render(svg, barStep, "hologram");
   assert(svg.textContent.includes("hologram"), "no message for unknown view");
+});
+
+
+// --- python highlighter -------------------------------------------------
+
+check("escapes markup so learner code cannot inject html", () => {
+  const html = pythonToHtml('x = "<img src=x onerror=alert(1)>"');
+  assert(!html.includes("<img"), "raw tag survived: " + html);
+  assert(html.includes("&lt;img"), "tag was not escaped: " + html);
+});
+
+check("escapes ampersands and comparison operators", () => {
+  const html = pythonToHtml("if a < b and c > d & e:");
+  assert(!/[^;]&[^a]/.test(html.replace(/&amp;|&lt;|&gt;/g, "")), "unescaped & left: " + html);
+  assert(html.includes("&lt;") && html.includes("&gt;"), "operators not escaped: " + html);
+});
+
+check("colours keywords, strings, numbers and comments", () => {
+  const html = pythonToHtml('def f():\n    # note\n    return "s" + 42');
+  assert(html.includes('tok-keyword">def'), "def not a keyword: " + html);
+  assert(html.includes('tok-comment">#'), "comment missed: " + html);
+  assert(html.includes('tok-string">&quot;s&quot;') || html.includes('tok-string">"s"'), "string missed: " + html);
+  assert(html.includes('tok-number">42'), "number missed: " + html);
+});
+
+check("does not colour keywords inside strings or comments", () => {
+  const html = pythonToHtml('x = "return None"  # def foo');
+  assert(!html.includes('tok-keyword">return'), "keyword inside string coloured: " + html);
+  assert(!html.includes('tok-keyword">def'), "keyword inside comment coloured: " + html);
+});
+
+check("names the function after def", () => {
+  const html = pythonToHtml("def two_sum(a):");
+  assert(html.includes('tok-name">two_sum'), "def name missed: " + html);
+});
+
+check("preserves the source text exactly once markup is stripped", () => {
+  const src = 'def f(x):\n    return x  # done\n';
+  const el = document.createElement("div");
+  el.innerHTML = pythonToHtml(src);
+  assert(el.textContent === src + "\n", JSON.stringify(el.textContent));
 });
 
 document.getElementById("out").textContent = results.join("\n");

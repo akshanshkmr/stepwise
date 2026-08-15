@@ -113,17 +113,37 @@ select, button, textarea, input { font: inherit; color: inherit; }
 
 .group + .group { margin-top: .5rem; }
 
+/* Collapsing is native <details>; only the marker needs styling. */
+.group summary { list-style: none; cursor: pointer; }
+.group summary::-webkit-details-marker { display: none; }
+
 .group-head {
-  display: flex; align-items: center; justify-content: space-between; gap: .5rem;
+  display: flex; align-items: center; gap: .4rem;
   margin: 0; padding: .45rem .6rem .3rem;
   font-size: .72rem; font-weight: 600; color: var(--muted);
+  border-radius: var(--r-md);
+}
+.group summary.group-head:hover { color: var(--text); background: var(--surface-2); }
+.group-head .count { margin-left: auto; }
+
+.chevron {
+  flex: 0 0 auto; width: 0; height: 0;
+  border-left: 4px solid currentColor;
+  border-top: 3.5px solid transparent;
+  border-bottom: 3.5px solid transparent;
+  transition: transform .14s ease;
+}
+.group details[open] .chevron, details[open] > summary .chevron {
+  transform: rotate(90deg);
 }
 .count {
   flex: 0 0 auto;
   font-size: .66rem; font-weight: 500; color: var(--faint);
   background: var(--surface-2); border-radius: var(--r-full);
   padding: .08rem .42rem;
+  font-variant-numeric: tabular-nums;
 }
+.count.all { color: var(--success); }
 /* Patterns with no problems yet say so plainly instead of pretending. */
 .group.empty .group-head { color: var(--faint); }
 .group.empty .count { background: transparent; font-style: italic; }
@@ -147,10 +167,28 @@ select, button, textarea, input { font: inherit; color: inherit; }
 }
 #problem-list button[aria-current="true"] .dot { background: var(--accent); }
 
+/* Solved is a quiet fact, not a trophy: a tick and a green dot, nothing more. */
+#problem-list button.solved .dot { background: var(--success); }
+#problem-list button.solved::after {
+  content: "✓"; margin-left: auto;
+  color: var(--success); font-size: .78rem; line-height: 1;
+}
+
 .sidebar-foot {
-  margin-top: auto; padding: .75rem .6rem .25rem;
+  margin-top: auto; padding: .8rem .6rem .25rem;
   border-top: 1px solid var(--border);
   font-size: .74rem; color: var(--faint);
+}
+.sidebar-foot p { margin: 0 0 .45rem; }
+
+#total-bar {
+  height: 4px; border-radius: var(--r-full);
+  background: var(--surface-3); overflow: hidden;
+}
+#total-bar::before {
+  content: ""; display: block; height: 100%; width: var(--pct, 0%);
+  background: var(--success); border-radius: var(--r-full);
+  transition: width .3s ease;
 }
 
 /* ---- main -------------------------------------------------------------- */
@@ -326,20 +364,43 @@ button:disabled { opacity: .4; cursor: not-allowed; }
 }
 .editor-wrap:focus-within { border-color: var(--accent); }
 
-#gutter, #editor {
+/* The overlay only lines up if the textarea and the highlight layer share
+   every metric that affects glyph position. Change one, change both. */
+#gutter, #editor, #highlight {
   font: 13px/1.6 var(--mono);
   padding: .8rem 0; margin: 0; border: 0; background: none;
+  tab-size: 4;
 }
+
+.editor-field { position: relative; flex: 1; min-width: 0; height: 320px; }
+
+#highlight, #editor {
+  position: absolute; inset: 0;
+  padding-left: .35rem; padding-right: .8rem;
+  white-space: pre; overflow: auto;
+}
+#highlight {
+  pointer-events: none; overflow: hidden; color: var(--text);
+}
+#editor {
+  color: transparent; caret-color: var(--text); resize: none;
+  -webkit-text-fill-color: transparent;
+}
+#editor::selection { background: color-mix(in srgb, var(--accent) 45%, transparent); }
+
+.tok-keyword  { color: #c678dd; }
+.tok-string   { color: #98c379; }
+.tok-comment  { color: var(--faint); font-style: italic; }
+.tok-number   { color: #d19a66; }
+.tok-constant { color: #56b6c2; }
+.tok-builtin  { color: #61afef; }
+.tok-name     { color: #e5c07b; }
 #gutter {
   flex: 0 0 auto; padding-left: .8rem; padding-right: .65rem;
   color: var(--faint); text-align: right; user-select: none;
   overflow: hidden; white-space: pre;
 }
-#editor {
-  flex: 1; min-width: 0; height: 320px; color: var(--text);
-  padding-left: .35rem; padding-right: .8rem;
-  resize: vertical; outline: none; white-space: pre; overflow: auto; tab-size: 4;
-}
+#editor { outline: none; }
 
 .actions { display: flex; gap: .5rem; margin-top: .75rem; }
 

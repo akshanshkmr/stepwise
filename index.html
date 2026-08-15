@@ -23,7 +23,10 @@
     <label class="sr-only" for="picker">Choose a problem</label>
     <select id="picker" class="sr-only"></select>
 
-    <p class="sidebar-foot">Watch it work, predict the next move, then write it yourself.</p>
+    <div class="sidebar-foot">
+      <p id="total-progress">0 of 0 solved</p>
+      <div id="total-bar" role="presentation"></div>
+    </div>
   </nav>
 
   <main class="work">
@@ -72,8 +75,11 @@
       <label for="editor">Your solution</label>
       <div class="editor-wrap">
         <pre id="gutter" aria-hidden="true"></pre>
-        <textarea id="editor" spellcheck="false" autocapitalize="off"
-                  autocorrect="off" autocomplete="off" wrap="off"></textarea>
+        <div class="editor-field">
+          <pre id="highlight" aria-hidden="true"><code></code></pre>
+          <textarea id="editor" spellcheck="false" autocapitalize="off"
+                    autocorrect="off" autocomplete="off" wrap="off"></textarea>
+        </div>
       </div>
       <div class="actions">
         <button id="run" class="primary">Run tests</button>
