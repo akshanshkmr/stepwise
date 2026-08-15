@@ -1,12 +1,86 @@
-# Stepwise
+<h1 align="center">Stepwise</h1>
 
-**Learn algorithms by predicting them, not by reading solutions.**
+<p align="center">
+  <strong>Stop memorising algorithms. Start predicting them.</strong><br>
+  <a href="https://akshanshkmr.github.io/stepwise/">Try it now →</a>
+</p>
 
-Stepwise animates an algorithm frame by frame, stops at the moments where the
-obvious guess is wrong, and makes you commit to an answer before it will go on.
-Then you write the code yourself and run it against real tests.
+---
 
-It never shows you a solution.
+You know the feeling. You read the solution, it makes perfect sense, you nod
+along — and a week later, faced with a slightly different problem, you have
+nothing.
+
+That is because reading a solution feels like learning and isn't. Stepwise is
+built to stop you doing it.
+
+## How it works
+
+**1. Watch the algorithm run.** Not a diagram of it — a real recorded run,
+frame by frame. Trapping Rain Water shows actual walls with water pooling in the
+dips. Valid Parentheses shows the stack growing and shrinking as brackets match.
+
+**2. It stops and asks you.** At the moments where the obvious guess is wrong,
+the animation halts:
+
+> **The sum is 17 and the target is 9. Which pointer should move?**
+> - l, rightward
+> - r, leftward
+
+Guess wrong and it explains why, and stays exactly where it is. **You cannot
+skip ahead, and you cannot open the editor until you have answered.** That is
+the entire point: the useful moment is the one just before you know.
+
+**3. Get hints that make you think.** Three of them, escalating — a nudge, then
+the idea that makes it work, then the shape of the loop in plain English. Never
+code. You are told what to think about, not what to type.
+
+**4. Write it yourself and run it.** Real Python, real test cases, in your
+browser. Nothing to install.
+
+**5. Watch your own code run.** Stuck on why yours fails? Press **Visualize my
+run** and your solution is animated in the same picture. A classic:
+
+```
+l starts at 0; r starts at 3
+s = 17
+l: 0 to 1
+s = 22      ← moving away from the target
+l: 1 to 2
+s = 26
+```
+
+You see the bug instead of being told about it.
+
+## What's inside
+
+| Pattern | Problems |
+| --- | --- |
+| **Arrays & Hashing** | Move Zeroes `Easy` |
+| **Two Pointers** | Valid Palindrome `Easy` · Two Sum II `Medium` · 3Sum `Medium` · Container With Most Water `Medium` · Trapping Rain Water `Hard` |
+| **Stack** | Valid Parentheses `Easy` · Daily Temperatures `Medium` |
+
+Organised by pattern, following the NeetCode structure. The sidebar tracks what
+you have solved. More patterns are coming — sliding window, binary search, trees,
+graphs, dynamic programming.
+
+## Things worth knowing
+
+**Nothing is stored anywhere but your browser.** No account, no sign-up, no
+tracking, no server. Your progress, your code, and your hints live in
+`localStorage` and never leave your machine. Clearing your browser data clears
+your progress.
+
+**Python only, for now.**
+
+**The first run takes a moment.** Python runs inside the browser, so the first
+time you press *Run tests* it downloads about 10 MB. After that it is instant.
+
+**It will not show you the answer.** Not in a hint, not in the animation, not
+anywhere. If you want a solution to copy, this is the wrong tool — and that is
+deliberate.
+
+## Run it on your own machine
 
 ```bash
 git clone https://github.com/akshanshkmr/stepwise.git
@@ -14,162 +88,22 @@ cd stepwise
 python3 serve.py
 ```
 
-Open <http://localhost:8000>. No install, no build, no account, no server.
+Then open <http://localhost:8000>. No install, no build step, no dependencies.
 
----
+## Contributing
 
-## Why
-
-Most practice tools optimise for throughput: read the editorial, memorise the
-shape, move on. That produces people who can recite two-pointer code and stall
-the moment a problem is phrased differently.
-
-Stepwise is built on the opposite bet — that the useful moment is the one just
-before you know the answer. So the animation halts and asks:
-
-> The sum is 17 and the target is 9. Which pointer should move?
->
-> - `l, rightward`
-> - `r, leftward`
-
-Answer wrong and it tells you why, and stays put. **The editor stays locked
-until you have answered.** If you never make a prediction, you never get to
-type — that is the whole product, and it is deliberately not skippable.
-
-## What you get per problem
-
-- **An animation built from a real run** of the algorithm, not a hand-drawn
-  approximation. Every frame is recorded state.
-- **Checkpoints** at the decisions where the naive guess fails.
-- **Three hints that escalate** — a nudge, then the invariant, then the loop
-  structure in words. Never code. The build rejects a hint that looks like code.
-- **Your own run, visualised.** Write a solution, press *Visualize my run*, and
-  your code is traced and animated in the same view, so you can watch where
-  yours diverges. Nothing is injected into your code; a `sys.settrace` hook
-  reads its locals.
-- **Real tests in the browser** via Pyodide. Wrong answers, exceptions, syntax
-  errors and infinite loops all come back as results, never as a hung tab.
-
-## Watch a bug happen
-
-Give Two Sum II an inverted comparison and trace it:
-
-```
-l starts at 0; r starts at 3
-s = 17
-l: 0 to 1
-s = 22
-l: 1 to 2
-s = 26
-```
-
-The sum runs *away* from the target 9. You see the bug instead of being told
-about it.
-
-## Content
-
-8 problems across 3 patterns, following the NeetCode structure:
-
-| Pattern | Problems |
-| --- | --- |
-| Arrays & Hashing | Move Zeroes |
-| Two Pointers | Valid Palindrome · Two Sum II · 3Sum · Container With Most Water · Trapping Rain Water |
-| Stack | Valid Parentheses · Daily Temperatures |
-
-Each carries a difficulty, and the sidebar tracks what you have solved.
-
-## Views
-
-Problems are drawn by the view their data deserves, declared in one line of JSON:
-
-| view | for | example |
-| --- | --- | --- |
-| `cells` | arrays and strings where the **values** matter | Two Sum II |
-| `bars` | histograms and elevation maps where the **shape** matters | Trapping Rain Water — real columns with water pooling in the dips |
-| `stack` | problems where the answer depends on **what you kept** | Valid Parentheses |
-
-Adding a shape is one file in `views/` plus a manifest entry. The dispatcher,
-the app, the recorder and the validator all read that manifest and need no edit.
-
-## How it is built
-
-No dependencies, no build step, no framework, no backend. Plain ES modules and
-the Python standard library. Everything is static; `serve.py` exists only to
-serve the app and *not* the reference solutions.
-
-```
-index.html  app.js  visualizer.js  runner.js  highlight.js  style.css
-views/          one renderer per shape of data, plus manifest.json
-problems/       one JSON file per problem — the entire content contract
-tracer.py       turns an uninstrumented function into animation frames
-tools/          authoring: record.py, validate.py, new_problem.py
-dev/            self-check harnesses (these hold reference solutions)
-```
-
-The interesting piece is `tracer.py`. It runs an ordinary, uninstrumented
-function under `sys.settrace` and derives animation frames from its locals — the
-longest list of scalars is the array, integers indexing it are pointers, other
-scalars are the readout. **One tracer, two callers:** the browser uses it to
-animate your run, and the authoring tools use it to generate a problem's
-walkthrough. Two copies would drift, and your run would animate differently from
-the walkthrough it is compared against.
-
-Progress, hints, answered checkpoints and your code live in `localStorage`.
-Nothing leaves the browser.
-
-## Adding a problem
+Problems are plain JSON files, and adding one needs no JavaScript. The full
+authoring guide — how to write hints that teach, where to place the prediction
+checkpoints, and how the animations get generated — is in
+[CLAUDE.md](CLAUDE.md).
 
 ```bash
 python3 tools/new_problem.py two-sum --pattern "Arrays & Hashing" --difficulty Easy --view cells
 ```
 
-Then write the content, add a plain solution to `tools/record.py`, run
-`python3 tools/record.py` to generate the frames, and rewrite the captions at
-the decision points. [`CLAUDE.md`](CLAUDE.md) is the full playbook, including the
-rules for captions and checkpoints and the traps this repo has already hit.
-
-The generated captions are mechanical (`r: 3 to 2`). Rewriting the handful that
-sit at decisions is the real work, and it is the part no tool can do:
-
-> ✅ "The sum is too big, so only shrinking from the right can help."
->
-> ❌ "r decreases by 1."
-
-Nothing needs registering — `record.py` rebuilds the index and the sidebar picks
-the problem up on reload.
-
-## Checks
-
-```bash
-python3 -m pytest tools/ -q     # content contract and authoring tools
-python3 tools/validate.py       # every problem file
-node dev/test-node.mjs          # gates, storage migration, highlighter escaping
-```
-
-CI runs those plus a check that regenerating the traces is a no-op, which
-catches a committed animation drifting from the solution that produced it.
-
-Two harnesses need a browser: `dev/test-visualizer.html` and
-`dev/test-runner.html`. They contain reference solutions, so `serve.py` hides
-them; serve them with plain `python3 -m http.server` when you want to run them.
-
-## Honest limitations
-
-- **The step schema is proven for rows and a stack.** It is *unproven* for a DP
-  table or a recursion tree. Those patterns need a new view and probably a
-  schema change — worth one throwaway problem before committing to them.
-- **The auto-tracer cannot infer view overlays.** It does not know about the
-  water in Trapping Rain Water or the stack in Valid Parentheses, so those
-  problems are hand-traced, and *your* traced run renders without them.
-- **Your run is not diffed against the reference.** You can watch both; nothing
-  yet points at the first frame where they part.
-- **Auto-generated captions are honest but dull.** The tracer sees `r -= 1`, not
-  why.
-- **`serve.py` is answer-hiding, not a security boundary.** It stops a curious
-  learner browsing to the solutions; it does nothing against anyone who has the
-  repo.
-- **The prediction gate is an experiment.** Set `GATE_EDITOR = false` in
-  `app.js` to turn it off in one line.
+If a hint would be more useful, a caption clearer, or a checkpoint better
+placed, that is the most valuable kind of contribution here. The captions are
+the teaching.
 
 ## Licence
 
