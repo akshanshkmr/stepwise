@@ -72,4 +72,15 @@ await check("state does not leak between runs", async () => {
   const res = await run("y = 2\n", "two_sum", TESTS);
   assert(res[0].error && res[0].error.includes("two_sum"), "stale function survived: " + res[0].error);
 });
+
+await check("non-serializable return is a failing result, not a thrown error", async () => {
+  const res = await run("def two_sum(numbers, target):\n    return {1, 2}\n", "two_sum", TESTS);
+  assert(!res[0].pass, "should not pass");
+  assert(typeof res[0].error === "string" && res[0].error.length > 0, "got " + res[0].error);
+});
+
+await check("timeout survives a broad except inside the loop", async () => {
+  const res = await run("def two_sum(numbers, target):\n    while True:\n        try:\n            pass\n        except Exception:\n            pass\n", "two_sum", TESTS);
+  assert(res[0].error && res[0].error.includes("timed out"), "got " + res[0].error);
+});
 </script>

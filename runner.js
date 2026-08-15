@@ -25,7 +25,7 @@ export function ready(onProgress) {
 const HARNESS = `
 import json, sys, traceback
 
-class _Timeout(Exception):
+class _Timeout(BaseException):
     pass
 
 def _run_tests(source, func_name, tests_json):
@@ -58,6 +58,12 @@ def _run_tests(source, func_name, tests_json):
             sys.settrace(_trace)
             actual = fn(*[_copy(a) for a in t["args"]])
             sys.settrace(None)
+            try:
+                json.dumps(actual)
+            except TypeError as e:
+                results.append({"args": t["args"], "expect": t["expect"], "actual": None,
+                                "pass": False, "error": f"TypeError: {e}"})
+                continue
             ok = actual == t["expect"]
             results.append({"args": t["args"], "expect": t["expect"],
                             "actual": actual, "pass": ok, "error": None})
@@ -83,7 +89,10 @@ def _copy(value):
 export async function run(source, func, tests) {
   const py = await ready();
   const runTests = py.globals.get("_run_tests");
-  const raw = runTests(source, func, JSON.stringify(tests));
-  runTests.destroy();
-  return JSON.parse(raw);
+  try {
+    const raw = runTests(source, func, JSON.stringify(tests));
+    return JSON.parse(raw);
+  } finally {
+    runTests.destroy();
+  }
 }
