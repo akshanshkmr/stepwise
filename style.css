@@ -216,7 +216,10 @@ select, button, textarea, input { font: inherit; color: inherit; }
 
 /* ---- main -------------------------------------------------------------- */
 
-.work { flex: 1; display: grid; grid-template-columns: minmax(0, 1fr) minmax(340px, 420px); min-width: 0; }
+.work {
+  flex: 1; display: grid; min-width: 0;
+  grid-template-columns: minmax(0, 1fr) clamp(380px, 34vw, 620px);
+}
 
 .column { overflow-y: auto; padding: 1.25rem; min-width: 0; }
 /* Measure, not width: long prose lines are hard to read, and the animation
@@ -442,7 +445,13 @@ button:disabled { opacity: .4; cursor: not-allowed; }
   tab-size: 4;
 }
 
-.editor-field { position: relative; flex: 1; min-width: 0; height: 320px; }
+.editor-field {
+  position: relative; flex: 1; min-width: 0;
+  height: clamp(320px, 52vh, 720px);
+  min-height: 200px;
+  /* resize needs a non-visible overflow to get a grip */
+  resize: vertical; overflow: hidden;
+}
 
 #highlight, #editor {
   position: absolute; inset: 0;
