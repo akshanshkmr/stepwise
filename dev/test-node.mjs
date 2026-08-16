@@ -29,8 +29,20 @@ test("the editor stays shut until every prediction is made", () => {
   assert.equal(predictionsOwed(cps, new Set([0, 1]), false), 0);
 });
 
+test("the first problem a learner ever opens is never gated", () => {
+  // onboarded=false stands for "this is the first problem you have opened".
+  assert.equal(predictionsOwed([{}, {}], new Set(), false, false), 0);
+  // Answering one of its checkpoints must not lock the rest of that problem.
+  assert.equal(predictionsOwed([{}, {}], new Set([0]), false, false), 0);
+});
+
+test("the gate is live from the second problem onward", () => {
+  assert.equal(predictionsOwed([{}, {}], new Set(), false, true), 2);
+  assert.equal(predictionsOwed([{}, {}], new Set([0]), false, true), 1);
+});
+
 test("a solved problem never re-locks", () => {
-  assert.equal(predictionsOwed([{}, {}], new Set(), true), 0);
+  assert.equal(predictionsOwed([{}, {}], new Set(), true, true), 0);
 });
 
 test("a problem with no checkpoints cannot lock anyone out", () => {

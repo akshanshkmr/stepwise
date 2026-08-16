@@ -332,6 +332,23 @@ button:disabled { opacity: .4; cursor: not-allowed; }
 
 #caption { margin: .9rem 0 0; max-width: 68ch; color: var(--text); }
 
+.play-btn { min-width: 6.2em; }
+.speed-btn {
+  padding: .35rem .55rem; font-size: .78rem; font-variant-numeric: tabular-nums;
+  min-width: 3.1em;
+}
+
+/* Offered exactly when a run fails, so it reads as the next thing to do. */
+.trace-cta { width: 100%; margin-bottom: .35rem; text-align: left; }
+
+/* After the first answered checkpoint the lock box explains the rule instead
+   of blocking — same element, different job, so it must not look like a wall. */
+#lock.note {
+  background: var(--surface-2);
+  border-color: var(--border);
+}
+#lock.note .lock-title::before { content: "✓ "; color: var(--success); }
+
 .controls {
   display: flex; align-items: center; gap: .4rem;
   margin-top: 1rem; padding-top: .9rem;

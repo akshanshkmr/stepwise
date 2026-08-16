@@ -39,8 +39,12 @@ export const GATE_EDITOR = true;
 
 /** Checkpoints still owed before the editor opens, given a problem's
  *  checkpoints, what has been answered, and whether it is already solved. */
-export function predictionsOwed(checkpoints, answered, solved) {
+export function predictionsOwed(checkpoints, answered, solved, onboarded = true) {
   if (!GATE_EDITOR || solved) return 0;
+  // The very first problem someone opens is never gated. Locking the editor
+  // before they have seen a checkpoint do anything is a door slammed by a
+  // stranger: the mechanic has to earn its constraint first.
+  if (!onboarded) return 0;
   return checkpoints.reduce((n, _, i) => n + (answered.has(i) ? 0 : 1), 0);
 }
 
@@ -55,6 +59,13 @@ let solved = false;
 let mine = null;
 
 const PREFIX = "stepwise:";
+/* The first problem someone ever opens is never gated — the whole of it, not
+   just its opening moments. Gating halfway through is worse than gating from
+   the start: it teaches that the app will change the rules on you. */
+const FIRST_KEY = `${PREFIX}first-problem`;
+let firstProblemId = localStorage.getItem(FIRST_KEY);
+let seenTheRule = localStorage.getItem(`${PREFIX}seen-rule`) === "1";
+const gateApplies = () => firstProblemId !== null && firstProblemId !== problem.id;
 const storageKey = () => `${PREFIX}${problem.id}`;
 
 const COLLAPSED_KEY = `${PREFIX}collapsed`;
@@ -102,6 +113,11 @@ async function loadProblem(id) {
   }
   index = 0;
   mine = null;
+  pause();
+  if (firstProblemId === null) {
+    firstProblemId = id;
+    localStorage.setItem(FIRST_KEY, id);
+  }
   load();
   $("title").textContent = problem.title;
   $("difficulty").textContent = problem.difficulty;
@@ -150,6 +166,7 @@ function draw() {
   const atEnd = index >= steps.length - 1;
   $("next").disabled = blocked !== null || atEnd;
   $("last").disabled = blocked !== null || atEnd;
+  $("play").disabled = blocked !== null || atEnd;
   $("scrub").disabled = blocked !== null;
   $("prev").disabled = index === 0;
   $("first").disabled = index === 0;
@@ -166,9 +183,20 @@ function draw() {
     b.onclick = () => {
       if (opt === cp.answer) {
         answered.add(blocked);
+        const firstEver = !gateApplies() && !seenTheRule;
         save();
         draw();
         updateLock();
+        if (firstEver) {
+          seenTheRule = true;
+          localStorage.setItem(`${PREFIX}seen-rule`, "1");
+          $("lock-title").textContent = "That is the mechanic";
+          $("lock-body").textContent =
+            "That is the whole idea. From here on, the editor opens once you have "
+            + "made this problem's predictions.";
+          $("lock").hidden = false;
+          $("lock").classList.add("note");
+        }
         $("checkpoint").hidden = false;
         $("cp-question").textContent = "Right.";
         $("cp-options").replaceChildren();
@@ -195,17 +223,60 @@ function go(i) {
   draw();
 }
 
+/* Watching should not cost 24 clicks. Play advances on a timer and stops
+   itself the moment `go` refuses to move — which is exactly a checkpoint, or
+   the end. Attention spent on transport is attention not spent on the
+   algorithm. */
+const SPEEDS = [
+  { label: "0.5×", ms: 1500 },
+  { label: "1×", ms: 850 },
+  { label: "2×", ms: 400 },
+];
+let speed = 1;
+let timer = null;
+
+const playing = () => timer !== null;
+
+function pause() {
+  if (timer !== null) clearInterval(timer);
+  timer = null;
+  $("play").textContent = "▶ Play";
+  $("play").setAttribute("aria-label", "Play");
+}
+
+function play() {
+  if (playing()) return pause();
+  const steps = mine ?? problem.steps;
+  if (index >= steps.length - 1) go(0);
+  $("play").textContent = "❚❚ Pause";
+  $("play").setAttribute("aria-label", "Pause");
+  timer = setInterval(() => {
+    const before = index;
+    go(index + 1);
+    if (index === before) pause();   // a gate, or the end
+  }, SPEEDS[speed].ms);
+}
+
 function showMine(steps) {
+  pause();
   mine = steps;
   index = 0;
   draw();
 }
 
-$("next").onclick = () => go(index + 1);
-$("prev").onclick = () => go(index - 1);
-$("first").onclick = () => go(0);
-$("last").onclick = () => go((mine ?? problem.steps).length - 1);
-$("scrub").oninput = (e) => go(Number(e.target.value));
+$("play").onclick = () => play();
+$("speed").onclick = () => {
+  speed = (speed + 1) % SPEEDS.length;
+  $("speed").textContent = SPEEDS[speed].label;
+  if (playing()) { pause(); play(); }   // adopt the new tempo immediately
+};
+
+// Any manual move means the learner has taken over.
+$("next").onclick = () => { pause(); go(index + 1); };
+$("prev").onclick = () => { pause(); go(index - 1); };
+$("first").onclick = () => { pause(); go(0); };
+$("last").onclick = () => { pause(); go((mine ?? problem.steps).length - 1); };
+$("scrub").oninput = (e) => { pause(); go(Number(e.target.value)); };
 $("hint-btn").onclick = () => { hintsUsed++; save(); renderHints(); };
 $("editor").oninput = () => { save(); drawGutter(); paint(); };
 $("editor").onscroll = () => {
@@ -217,7 +288,7 @@ $("editor").onscroll = () => {
 /** Opens or closes the editor according to how many predictions are still
  *  owed. Solved problems stay open so returning to your own code is free. */
 function updateLock() {
-  const owed = predictionsOwed(problem.checkpoints, answered, solved);
+  const owed = predictionsOwed(problem.checkpoints, answered, solved, gateApplies());
   const locked = owed > 0;
 
   $("lock").hidden = !locked;
@@ -227,6 +298,8 @@ function updateLock() {
   $("editor-wrap").classList.toggle("locked", locked);
 
   if (locked) {
+    $("lock").classList.remove("note");
+    $("lock-title").textContent = "Predict first";
     const total = problem.checkpoints.length;
     $("lock-body").textContent =
       `Step through the walkthrough and answer ${owed === total
@@ -289,7 +362,7 @@ $("editor").onkeydown = (e) => {
   }
 };
 
-$("mine-back").onclick = () => { mine = null; index = 0; draw(); };
+$("mine-back").onclick = () => { pause(); mine = null; index = 0; draw(); };
 
 $("viz-mine").onclick = async () => {
   const btn = $("viz-mine");
@@ -312,7 +385,12 @@ $("viz-mine").onclick = async () => {
     }
     showMine(out.steps);
 
-    const notes = [`Traced your run on ${JSON.stringify(args)} — ${out.steps.length} frames.`];
+    const n = out.steps.length;
+    const notes = [`Traced your run on ${JSON.stringify(args)} — ${n} frame${n === 1 ? "" : "s"}.`];
+    if (n === 1) {
+      notes.push("There was nothing to watch: no loop variable changed, so your"
+                 + " function returned without doing any work.");
+    }
     if (out.error) notes.push(`It stopped early: ${out.error}`);
     else notes.push(`It returned ${JSON.stringify(out.result)}.`);
     if (out.truncated) notes.push("Only the first 400 frames were captured.");
@@ -347,6 +425,19 @@ $("run").onclick = async () => {
       if (!r.pass) div.appendChild(pre);
       return div;
     }));
+
+    // The strongest feature in the app is useless if it is a grey button the
+    // learner never presses. Offer it at the one moment they need it.
+    const failed = results.filter(r => !r.pass).length;
+    if (failed) {
+      const cta = document.createElement("button");
+      cta.className = "primary trace-cta";
+      cta.textContent = failed === 1
+        ? "1 test failed — watch your code run →"
+        : `${failed} tests failed — watch your code run →`;
+      cta.onclick = () => $("viz-mine").click();
+      $("results").prepend(cta);
+    }
 
     if (results.length && results.every(r => r.pass) && !solved) {
       solved = true;

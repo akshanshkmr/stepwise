@@ -51,11 +51,13 @@
         </div>
 
         <div class="controls">
+          <button id="play" class="primary play-btn" aria-label="Play">▶ Play</button>
           <button id="first" class="icon-btn" aria-label="First step">⏮</button>
           <button id="prev" class="icon-btn" aria-label="Previous step">◀</button>
           <button id="next" class="icon-btn" aria-label="Next step">▶</button>
           <button id="last" class="icon-btn" aria-label="Last step">⏭</button>
           <input id="scrub" type="range" min="0" value="0" aria-label="Step">
+          <button id="speed" class="ghost speed-btn" aria-label="Playback speed">1×</button>
           <span id="step-count"></span>
         </div>
       </div>
@@ -76,7 +78,7 @@
 
     <section class="column right" id="code-pane">
       <div id="lock" hidden>
-        <p class="lock-title">Predict first</p>
+        <p class="lock-title" id="lock-title">Predict first</p>
         <p class="lock-body" id="lock-body"></p>
       </div>
       <label for="editor">Your solution</label>
